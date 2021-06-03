@@ -19,8 +19,8 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <returns> ADT query with select and from clause. </returns>
         public AdtQuerySelectFrom From(AdtCollection collection)
         {
-            Console.WriteLine(someString);
-            Console.WriteLine(collection);
+            Clauses.Add(new FromClause(collection));
+            Console.WriteLine(someString);  // TODO - accessibility issue, delete this later
             return new AdtQuerySelectFrom();
         }
 

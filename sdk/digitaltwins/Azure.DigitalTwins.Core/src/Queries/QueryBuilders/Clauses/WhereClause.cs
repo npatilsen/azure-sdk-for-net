@@ -26,5 +26,16 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             Type = ClauseType.WHERE;
             Condition = condition;
         }
+
+        public override string Stringify()
+        {
+            List<string> whereClauseComponents = new List<string>();
+            whereClauseComponents.Add("WHERE");
+
+            // TODO -- add rest of where clause components.
+            // turn the condition into a string
+
+            return string.Join(" ", whereClauseComponents);
+        }
     }
 }

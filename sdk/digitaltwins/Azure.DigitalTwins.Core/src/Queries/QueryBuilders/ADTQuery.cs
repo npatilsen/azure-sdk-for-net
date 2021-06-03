@@ -21,7 +21,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// The substance of the query is broken down into clauses, stored in a list
         /// for future parsing purposes.
         /// </summary>
-        protected List<BaseClause> Clauses { get; set; } = new List<BaseClause>();
+        protected List<BaseClause> Clauses { get; } = new List<BaseClause>();
 
         /// <summary>
         /// Adds a new clause to the Clauses component. Internally called within this class by
@@ -47,9 +47,21 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <returns> Query that contains a select clause. </returns>
         public AdtQuerySelect Select(params string[] args)
         {
-            Console.WriteLine(someString);
-            Console.WriteLine(args);
-            return new AdtQuerySelect();
+            // with just one argument
+            if (args.Length == 1)
+            {
+                string argument = args[0];
+                Clauses.Add(new SelectClause(argument));
+
+                return new AdtQuerySelect();
+            }
+            // TODO -- multiple arugments
+            else
+            {
+                Console.WriteLine(someString);
+                Console.WriteLine(args);
+                return new AdtQuerySelect();
+            }
         }
 
         /// <summary>
@@ -83,7 +95,17 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <returns> The query in string format. </returns>
         public override string ToString()
         {
-            return "";
+            List<string> finalQuery = new List<string>();
+
+            // parse clauses and build the query in string format.
+            foreach (BaseClause clause in Clauses)
+            {
+                // grab each completed clause string
+                finalQuery.Add(clause.Stringify());
+            }
+
+            // concatenate list with spaces before passing back
+            return string.Join(" ", finalQuery);
         }
     }
 }

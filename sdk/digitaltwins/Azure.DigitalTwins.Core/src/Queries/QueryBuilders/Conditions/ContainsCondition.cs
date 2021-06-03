@@ -32,5 +32,18 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             Value = value;
             Searched = searched;
         }
+
+        public override string Stringify()
+        {
+            // TODO -- support NIN
+            List<string> containsComponents = new List<string>();
+            containsComponents.Add(Value);
+            containsComponents.Add("IN");
+
+            // TODO -- consider making this cleaner -- string concatenation might not be super efficient
+            containsComponents.Add("[" + string.Join(" ", Searched) + "]");
+
+            return string.Join(" ", containsComponents);
+        }
     }
 }

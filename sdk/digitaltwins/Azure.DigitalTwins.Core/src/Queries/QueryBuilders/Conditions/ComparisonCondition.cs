@@ -18,7 +18,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         public string Field { get; set; }
 
         /// <summary>
-        /// The comparision operator being invoked.
+        /// The comparision operator being invoked. TODO -- explore enum?
         /// </summary>
         public string Operator { get; set; }
 
@@ -38,6 +38,16 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             Field = field;
             Operator = oper;
             Value = value;
+        }
+
+        public override string Stringify()
+        {
+            List<string> comparisonComponents = new List<string>();
+            comparisonComponents.Add(Field);
+            comparisonComponents.Add(Operator);
+            comparisonComponents.Add(Value);
+
+            return string.Join(" ", comparisonComponents);
         }
     }
 }

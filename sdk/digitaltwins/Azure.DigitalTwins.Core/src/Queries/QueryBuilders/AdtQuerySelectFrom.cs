@@ -21,7 +21,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <returns> ADT query that already contains SELECT and FROM. </returns>
         public AdtQuerySelectFrom Where(BaseCondition condition)
         {
-            Console.WriteLine(condition);
+            Clauses.Add(new WhereClause(condition));
             return this;
         }
 

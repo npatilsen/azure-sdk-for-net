@@ -1,6 +1,10 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
+using System.Text;
+
 namespace Azure.DigitalTwins.Core.QueryBuilder
 {
     /// <summary>
@@ -22,6 +26,17 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             // TODO -- select multiple arguments (string[])
             Type = ClauseType.SELECT;
             ClauseArg = argument;
+        }
+
+        public override string Stringify()
+        {
+            List<string> selectClauseComponents = new List<string>();
+
+            // one argument -- TODO multiple arguments
+            selectClauseComponents.Add("SELECT");
+            selectClauseComponents.Add(ClauseArg);
+
+            return string.Join(" ", selectClauseComponents);
         }
     }
 }

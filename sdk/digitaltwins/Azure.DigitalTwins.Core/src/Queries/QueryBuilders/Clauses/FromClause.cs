@@ -27,5 +27,24 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             Type = ClauseType.FROM;
             Collection = collection;
         }
+
+        public override string Stringify()
+        {
+            List<string> fromClauseComponents = new List<string>();
+            fromClauseComponents.Add("FROM");
+
+            // check what kind of collection
+            if (Collection == AdtCollection.DigitalTwins)
+            {
+                // TODO - support aliasing (ex. DIGITALTWINS DT)
+                fromClauseComponents.Add("DIGITALTWINS");
+            }
+            else
+            {
+                fromClauseComponents.Add("RELATIONSHIPS");
+            }
+
+            return string.Join(" ", fromClauseComponents);
+        }
     }
 }
