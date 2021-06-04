@@ -36,6 +36,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         public override string Stringify()
         {
             // TODO -- support NIN
+            var str = new StringBuilder();
             List<string> containsComponents = new List<string>();
             containsComponents.Add(Value);
             containsComponents.Add("IN");
