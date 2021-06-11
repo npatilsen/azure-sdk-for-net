@@ -20,5 +20,16 @@ namespace Azure.DigitalTwins.Core.Tests
                 .Should()
                 .Be("WHERE TEMPERATURE = 5");
         }
+
+        [Test]
+        public void WhereQuery_Contains()
+        {
+            var query = new WhereQuery(null);
+            query.WhereContains("Owner", QueryContainOperator.IN, new string[] { "John", "Sally", "Marshall" });
+            query.Stringify()
+                .ToUpper()
+                .Should()
+                .Be("WHERE OWNER IN ['JOHN', 'SALLY', 'MARSHALL']");
+        }
     }
 }

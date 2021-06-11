@@ -38,6 +38,20 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         }
 
         /// <summary>
+        /// Adds a WHERE and the conditional arugments for a contains conditional statement to the query object. Used to search
+        /// a field for a user specified property.
+        /// </summary>
+        /// <param name="value"> User specified property to look for. </param>
+        /// <param name="operator"> ADT contains operator defined by the ADT query language. </param>
+        /// <param name="searched"> Field of possible options to check for the 'value' parameter. </param>
+        /// <returns> ADT query that already contains SELECT and FROM. </returns>
+        public WhereQuery WhereContains(string value, QueryContainOperator @operator, string[] searched)
+        {
+            _clauses.Add(new WhereClause(new ContainsCondition(value, @operator, searched)));
+            return this;
+        }
+
+        /// <summary>
         /// An alternative way to add a WHERE clause to the query by directly providing a string that contains the condition.
         /// </summary>
         /// <param name="condition"> The verbatim condition (SQL-like syntax) in string format. </param>

@@ -14,6 +14,11 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         public string Value { get; set; }
 
         /// <summary>
+        /// The ADT <see href="https://docs.microsoft.com/en-us/azure/digital-twins/reference-query-operators#contains-operators">contains operator</see> being invoked.
+        /// </summary>
+        public QueryContainOperator Operator { get; set; }
+
+        /// <summary>
         /// The list of objects being searched for a value.
         /// </summary>
         public string[] Searched { get; set; }
@@ -22,16 +27,22 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// Constructor for ContainsCondition.
         /// </summary>
         /// <param name="value"> The value being searched for within some list of objects.  </param>
+        /// <param name="operator"> The ADT <see href="https://docs.microsoft.com/en-us/azure/digital-twins/reference-query-operators#contains-operators">contains operator</see> being invoked. </param>
         /// <param name="searched"> The list of objects being searched for a value. </param>
-        public ContainsCondition(string value, string[] searched)
+        public ContainsCondition(string value, QueryContainOperator @operator, string[] searched)
         {
             Value = value;
+            Operator = @operator;
             Searched = searched;
         }
 
         public override string Stringify()
         {
-            throw new System.NotImplementedException();
+            // turn the string array into the correct format ['property1', 'property2', 'etc']
+            string searchedFormatted = $"['{string.Join("', '", Searched)}']";
+
+            // form entire conditional string
+            return $"{Value} {Operator} {searchedFormatted}";
         }
     }
 }

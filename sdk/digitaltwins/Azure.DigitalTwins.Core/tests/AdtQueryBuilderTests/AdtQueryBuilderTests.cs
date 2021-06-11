@@ -106,5 +106,19 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
                 .Should()
                 .Be("SELECT * FROM DIGITALTWINS WHERE TEMPERATURE >= 50");
         }
+
+        [Test]
+        public void AdtQueryBuilder_Where_Contains()
+        {
+            new AdtQueryBuilder()
+                .Select("*")
+                .From(AdtCollection.DigitalTwins)
+                .WhereContains("Location", QueryContainOperator.NIN, new string[] { "Paris", "Tokyo", "Madrid", "Prague" })
+                .Build()
+                .Stringify()
+                .ToUpper()
+                .Should()
+                .Be("SELECT * FROM DIGITALTWINS WHERE LOCATION NIN ['PARIS', 'TOKYO', 'MADRID', 'PRAGUE']");
+        }
     }
 }

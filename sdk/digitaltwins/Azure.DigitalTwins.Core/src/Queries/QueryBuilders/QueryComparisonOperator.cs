@@ -8,7 +8,7 @@ using System.Text;
 namespace Azure.DigitalTwins.Core.QueryBuilder
 {
     /// <summary>
-    /// Comparison operators in the ADT query language.
+    /// <see href="https://docs.microsoft.com/en-us/azure/digital-twins/reference-query-operators#comparison-operators">Comparison operators</see> in the ADT Query language.
     /// </summary>
     public enum QueryComparisonOperator
     {
