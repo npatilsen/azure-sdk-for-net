@@ -92,5 +92,19 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
                 .Should()
                 .Be("SELECT TOP(3) Room, Temperature FROM DigitalTwins");
         }
+
+        [Test]
+        public void AdtQueryBuilder_Where_Comparison()
+        {
+            new AdtQueryBuilder()
+                .Select("*")
+                .From(AdtCollection.DigitalTwins)
+                .WhereComparison("Temperature", QueryComparisonOperator.GreaterThanEqual, "50")
+                .Build()
+                .Stringify()
+                .ToUpper()
+                .Should()
+                .Be("SELECT * FROM DIGITALTWINS WHERE TEMPERATURE >= 50");
+        }
     }
 }

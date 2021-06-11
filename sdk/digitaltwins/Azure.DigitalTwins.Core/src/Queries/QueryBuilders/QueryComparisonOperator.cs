@@ -1,0 +1,45 @@
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Azure.DigitalTwins.Core.QueryBuilder
+{
+    /// <summary>
+    /// Comparison operators in the ADT query language.
+    /// </summary>
+    public enum QueryComparisonOperator
+    {
+        /// <summary>
+        /// Equality operator.
+        /// </summary>
+        Equal = 1,
+
+        /// <summary>
+        /// Inequality operator.
+        /// </summary>
+        NotEqual = 2,
+
+        /// <summary>
+        /// Greater than operator.
+        /// </summary>
+        GreaterThan = 3,
+
+        /// <summary>
+        /// Less than operator.
+        /// </summary>
+        LessThan = 4,
+
+        /// <summary>
+        /// Geater than or equal to operator.
+        /// </summary>
+        GreaterThanEqual = 5,
+
+        /// <summary>
+        /// Less than or equal to operator.
+        /// </summary>
+        LessThanEqual = 6,
+    }
+}

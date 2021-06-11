@@ -28,5 +28,10 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             Value = value;
             Searched = searched;
         }
+
+        public override string Stringify()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

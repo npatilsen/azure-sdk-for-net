@@ -57,6 +57,13 @@ namespace Azure.DigitalTwins.Core.Samples
                 .Select("Room", "Temperature")
                 .From(AdtCollection.DigitalTwins)
                 .Build();
+
+            // SELECT * FROM DIGITALTWINS WHERE TEMPERATURE < 5
+            AdtQueryBuilder query6 = new AdtQueryBuilder()
+                .Select("*")
+                .From(AdtCollection.DigitalTwins)
+                .WhereComparison("Temperature", QueryComparisonOperator.LessThan, "6")
+                .Build();
         }
     }
 }

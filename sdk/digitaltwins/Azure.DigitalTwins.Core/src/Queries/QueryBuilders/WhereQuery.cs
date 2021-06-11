@@ -24,15 +24,16 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         }
 
         /// <summary>
-        /// Adds a WHERE and its conditional argument(s) clause to the query object. Meant to be used for simple
-        /// conditions involving operators or with basic ADT functions. Multiple WHERE clauses are appended using
-        /// the AND logical operator.
+        /// Adds a WHERE and the conditional arguments for a comparison to the query object. Used to compare ADT properties
+        /// using the query language's comparison operators.
         /// </summary>
-        /// <param name="condition"> A custom object that encodes the logical statement nested within the WHERE clause. </param>
+        /// <param name="field"> The field being checked against a certain value. </param>
+        /// <param name="operator"> The comparison operator being invoked. </param>
+        /// <param name="value"> The value being checked against a Field. </param>
         /// <returns> ADT query that already contains SELECT and FROM. </returns>
-        internal WhereQuery Where(ConditionBase condition)
+        public WhereQuery WhereComparison(string field, QueryComparisonOperator @operator, string value)
         {
-            Console.WriteLine(condition);
+            _clauses.Add(new WhereClause(new ComparisonCondition(field, @operator, value)));
             return this;
         }
 
@@ -41,7 +42,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="condition"> The verbatim condition (SQL-like syntax) in string format. </param>
         /// <returns> ADT query that already contains SELECT and FROM. </returns>
-        public WhereQuery Where(string condition)
+        public WhereQuery WhereOverride(string condition)
         {
             Console.WriteLine(condition);
             return this;
@@ -117,16 +118,22 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <inheritdoc/>
         public override string Stringify()
         {
-            // TODO -- make this cleaner? design problem?
             if (_clauses.Any())
             {
-                // TODO -- if appending more strings turn into a stringbuilder
-                string whereComponents = $"{QueryConstants.Where} ";
+                // Where keyword only needs to be appened one time, happends outside of loop
+                StringBuilder whereComponents = new StringBuilder();
+                whereComponents.Append($"{QueryConstants.Where} ");
 
-                // TODO -- turn condition into a string
-                // add where arguments (conditions)
+                // Parse each Where conditional statement
+                foreach (WhereClause _clause in _clauses)
+                {
+                    if (_clause.Condition != null)
+                    {
+                        whereComponents.Append(_clause.Condition.Stringify());
+                    }
+                }
 
-                return whereComponents;
+                return whereComponents.ToString().Trim();
             }
 
             return string.Empty;

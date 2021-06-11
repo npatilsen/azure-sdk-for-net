@@ -11,11 +11,6 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     internal class SelectClause : ClauseBase
     {
         /// <summary>
-        /// The argument for the SELECT clause (eg. *).
-        /// </summary>
-        public string[] ClauseArgs { get; private set; }
-
-        /// <summary>
         /// Constructor for SELECT clause.
         /// </summary>
         /// <param name="arguments"> Arguments for what to select (collection, property, etc.). </param>
@@ -24,5 +19,10 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             Type = ClauseType.SELECT;
             ClauseArgs = arguments;
         }
+
+        /// <summary>
+        /// The argument for the SELECT clause (eg. *).
+        /// </summary>
+        public string[] ClauseArgs { get; private set; }
     }
 }
