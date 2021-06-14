@@ -19,6 +19,17 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         public const string Top = "TOP";
         public const string Count = "COUNT";
 
+        public const string IsDefined = "IS_DEFINED";
+        public const string IsNull = "IS_NULL";
+        public const string StartsWith = "STARTSWITH";
+        public const string EndsWith = "ENDSWITH";
+        public const string IsOfModel = "IS_OF_MODEL";
+        public const string IsBool = "IS_BOOL";
+        public const string IsNumber = "IS_NUMBER";
+        public const string IsString = "IS_STRING";
+        public const string IsPrimative = "IS_PRIMATIVE";
+        public const string IsObject = "IS_OBJECT";
+
         // Maps comparison operators represented alphabetically to respective symbolic representations.
         public static Dictionary<string, string> ComparisonOperators = new Dictionary<string, string>()
         {

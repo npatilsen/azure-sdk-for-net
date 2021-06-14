@@ -11,15 +11,25 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     internal class WhereClause : ClauseBase
     {
         /// <summary>
-        /// Condition object that encodes the logical condition behind the WHERE clause.
+        /// Condition object represented in string format that encodes the logical condition behind the WHERE clause.
         /// </summary>
-        internal ConditionBase Condition { get; set; }
+        internal string Condition { get; set; }
 
         /// <summary>
-        /// Constructor for a WHERE clause.
+        /// Constructor for a WHERE clause using the internal condition object.
         /// </summary>
         /// <param name="condition"> Condition argument for the WHERE clause. </param>
         internal WhereClause(ConditionBase condition)
+        {
+            Type = ClauseType.WHERE;
+            Condition = condition.Stringify();
+        }
+
+        /// <summary>
+        /// Constructor for a WHERE clause allowing for user formed strings and prebuilt ADT WHERE function arguments.
+        /// </summary>
+        /// <param name="condition"></param>
+        internal WhereClause(string condition)
         {
             Type = ClauseType.WHERE;
             Condition = condition;
