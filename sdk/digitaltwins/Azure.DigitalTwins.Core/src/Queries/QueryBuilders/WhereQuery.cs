@@ -28,12 +28,12 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// using the query language's comparison operators.
         /// </summary>
         /// <param name="field"> The field being checked against a certain value. </param>
-        /// <param name="operator"> The comparison operator being invoked. </param>
+        /// <param name="comparisonOperator"> The comparison operator being invoked. </param>
         /// <param name="value"> The value being checked against a Field. </param>
         /// <returns> ADT query that already contains SELECT and FROM. </returns>
-        public WhereQuery WhereComparison(string field, QueryComparisonOperator @operator, string value)
+        public WhereQuery WhereComparison(string field, QueryComparisonOperator comparisonOperator, string value)
         {
-            _clauses.Add(new WhereClause(new ComparisonCondition(field, @operator, value)));
+            _clauses.Add(new WhereClause(new ComparisonCondition(field, comparisonOperator, value)));
             return this;
         }
 
@@ -42,12 +42,12 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// a field for a user specified property.
         /// </summary>
         /// <param name="value"> User specified property to look for. </param>
-        /// <param name="operator"> ADT contains operator defined by the ADT query language. </param>
+        /// <param name="containOperator"> ADT contains operator defined by the ADT query language. </param>
         /// <param name="searched"> Field of possible options to check for the 'value' parameter. </param>
         /// <returns> ADT query that already contains SELECT and FROM. </returns>
-        public WhereQuery WhereContains(string value, QueryContainOperator @operator, string[] searched)
+        public WhereQuery WhereContains(string value, QueryContainOperator containOperator, string[] searched)
         {
-            _clauses.Add(new WhereClause(new ContainsCondition(value, @operator, searched)));
+            _clauses.Add(new WhereClause(new ContainsCondition(value, containOperator, searched)));
             return this;
         }
 
@@ -208,15 +208,16 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                 whereComponents.Append($"{QueryConstants.Where} ");
 
                 // Parse each Where conditional statement
-                foreach (WhereClause _clause in _clauses)
+                for (int i = 0; i < _clauses.Count - 1; i++)
                 {
-                    // TODO -- do we need this if statement now that we've overloaded the WhereClause constructor?
-                    if (_clause.Condition != null)
-                    {
-                        whereComponents.Append(_clause.Condition);
-                    }
+                    whereComponents.Append(_clauses[i].Condition);
+
+                    // Add AND logical operator by default for multiple WHERE coditions
+                    whereComponents.Append($" {QueryConstants.And} ");
                 }
 
+                // Attach final argument (outside of loop to avoid an extra And operator
+                whereComponents.Append(_clauses[_clauses.Count - 1].Condition);
                 return whereComponents.ToString().Trim();
             }
 

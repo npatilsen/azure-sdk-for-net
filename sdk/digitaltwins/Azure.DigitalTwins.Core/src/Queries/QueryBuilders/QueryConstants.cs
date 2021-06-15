@@ -19,6 +19,8 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         public const string Top = "TOP";
         public const string Count = "COUNT";
 
+        public const string And = "AND";
+
         public const string IsDefined = "IS_DEFINED";
         public const string IsNull = "IS_NULL";
         public const string StartsWith = "STARTSWITH";
@@ -33,12 +35,12 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         // Maps comparison operators represented alphabetically to respective symbolic representations.
         public static Dictionary<string, string> ComparisonOperators = new Dictionary<string, string>()
         {
-            { "Equal", "=" },
-            { "NotEqual", "!=" },
-            { "GeaterThan", ">" },
-            { "LessThan", "<" },
-            { "GreaterThanEqual", ">=" },
-            { "LessThanEqual", "<=" }
+            { QueryComparisonOperator.Equal.ToString(), "=" },
+            { QueryComparisonOperator.NotEqual.ToString(), "!=" },
+            { QueryComparisonOperator.GreaterThan.ToString(), ">" },
+            { QueryComparisonOperator.LessThan.ToString(), "<" },
+            { QueryComparisonOperator.GreaterOrEqual.ToString(), ">=" },
+            { QueryComparisonOperator.LessOrEqual.ToString(), "<=" }
         };
     }
 }

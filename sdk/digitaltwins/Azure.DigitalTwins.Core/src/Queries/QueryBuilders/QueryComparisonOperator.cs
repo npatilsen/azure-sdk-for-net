@@ -35,11 +35,11 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <summary>
         /// Geater than or equal to operator.
         /// </summary>
-        GreaterThanEqual = 5,
+        GreaterOrEqual = 5,
 
         /// <summary>
         /// Less than or equal to operator.
         /// </summary>
-        LessThanEqual = 6,
+        LessOrEqual = 6,
     }
 }

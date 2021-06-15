@@ -8,7 +8,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     /// <summary>
     /// Custom object for a WHERE clause. Only meant to be used when adding WHERE to a query. Hidden from user.
     /// </summary>
-    internal class WhereClause : ClauseBase
+    internal class WhereClause
     {
         /// <summary>
         /// Condition object represented in string format that encodes the logical condition behind the WHERE clause.
@@ -21,7 +21,6 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="condition"> Condition argument for the WHERE clause. </param>
         internal WhereClause(ConditionBase condition)
         {
-            Type = ClauseType.WHERE;
             Condition = condition.Stringify();
         }
 
@@ -31,7 +30,6 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="condition"></param>
         internal WhereClause(string condition)
         {
-            Type = ClauseType.WHERE;
             Condition = condition;
         }
     }

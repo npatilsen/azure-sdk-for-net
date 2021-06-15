@@ -155,5 +155,17 @@ namespace Azure.DigitalTwins.Core.Tests
                 .Should()
                 .Be("WHERE IS_OBJECT(MAPOBJECT)");
         }
+
+        [Test]
+        public void WhereQuery_MultipleQueryies()
+        {
+            var query = new WhereQuery(null);
+            query.WhereComparison("Temperature", QueryComparisonOperator.Equal, "50")
+                .WhereIsDefined("Humidity");
+            query.Stringify()
+                .ToUpper()
+                .Should()
+                .Be("WHERE TEMPERATURE = 50 AND IS_DEFINED(HUMIDITY)");
+        }
     }
 }

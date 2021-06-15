@@ -99,7 +99,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
             new AdtQueryBuilder()
                 .Select("*")
                 .From(AdtCollection.DigitalTwins)
-                .WhereComparison("Temperature", QueryComparisonOperator.GreaterThanEqual, "50")
+                .WhereComparison("Temperature", QueryComparisonOperator.GreaterOrEqual, "50")
                 .Build()
                 .Stringify()
                 .ToUpper()
@@ -158,6 +158,20 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
                 .Stringify()
                 .Should()
                 .Be("SELECT * FROM Relationships WHERE IS_BOOL(isOccupied)");
+        }
+
+        [Test]
+        public void AdtQueryBuilder_Where_MultipleWhere()
+        {
+            new AdtQueryBuilder()
+                .Select("Temperature")
+                .From(AdtCollection.DigitalTwins)
+                .WhereIsDefined("Humidity")
+                .WhereOverride("Occupants < 10")
+                .Build()
+                .Stringify()
+                .Should()
+                .Be("SELECT Temperature FROM DigitalTwins WHERE IS_DEFINED(Humidity) AND Occupants < 10");
         }
     }
 }
