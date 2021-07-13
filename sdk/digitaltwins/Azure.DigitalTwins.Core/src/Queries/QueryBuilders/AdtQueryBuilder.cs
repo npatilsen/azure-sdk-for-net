@@ -144,12 +144,11 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             // build the where string
             string whereGetQueryText = _whereStatement.GetQueryText();
 
-            if (whereGetQueryText.Length > 0)
+            if (!string.IsNullOrWhiteSpace(whereGetQueryText))
             {
                 finalQuery.Append(' ').Append(QueryConstants.Where).Append(' ');
+                finalQuery.Append(_whereStatement.GetQueryText());
             }
-
-            finalQuery.Append(_whereStatement.GetQueryText());
 
             return finalQuery.ToString().Trim();
         }

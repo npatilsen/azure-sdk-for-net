@@ -111,8 +111,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <inheritdoc/>
         public override string GetQueryText()
         {
-            // handle passing in null
-            if (_clause == null || _clause.ClauseArgs == null)
+            if (_clause?.ClauseArgs == null)
             {
                 return string.Empty;
             }
