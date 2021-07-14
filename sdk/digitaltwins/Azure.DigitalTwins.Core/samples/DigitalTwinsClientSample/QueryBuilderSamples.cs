@@ -85,7 +85,7 @@ namespace Azure.DigitalTwins.Core.Samples
                 .Where()
                 .IsOfModel("dtmi:example:room;1", true)
                 .Build();
-            
+
             // SELECT * FROM DIGITALTWINS WHERE Temperature = 50 AND IS_OF_MODEL("dtmi..", exact)
             AdtQueryBuilder logicalOps_SingleAnd = new AdtQueryBuilder()
                 .SelectAll()
@@ -211,6 +211,33 @@ namespace Azure.DigitalTwins.Core.Samples
                 .Compare("T.Humidity", QueryComparisonOperator.Equal, 30)
                 .Build();
             #endregion
+
+            #region Snippet:DigitalTwinsQueryBuilder_AzadSuggestion
+
+            DigitalTwinsQueryBuilder builder = new DigitalTwinsQueryBuilder()
+                .Select("*")
+                .From(AdtCollection.DigitalTwins)
+                .Where(q => q.IsOfModel("temp", "HVAC"));
+
+            DigitalTwinsQueryBuilder builder2 = new DigitalTwinsQueryBuilder()
+                .Select("*")
+                .From(AdtCollection.DigitalTwins)
+                .Where(q => q.IsOfModel("temp", "HVAC").And().Custom("temp > 10"));
+
+            DigitalTwinsQueryBuilder builder3 = new DigitalTwinsQueryBuilder()
+                .Select("*")
+                .From(AdtCollection.DigitalTwins)
+                .Where(q => q
+                    .IsOfModel("temp", "HVAC")
+                    .And()
+                    .Custom("temp > 10")
+                    .Or(q => q
+                        .IsOftype("temp", AdtDataType.AdtNumber)
+                        .Or()
+                        .Custom("hum > 10"))
+                    );
+
+            #endregion Snippet:DigitalTwinsQueryBuilder_AzadSuggestion
         }
     }
 }
