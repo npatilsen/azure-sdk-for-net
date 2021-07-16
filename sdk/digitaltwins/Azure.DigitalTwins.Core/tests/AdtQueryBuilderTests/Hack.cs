@@ -1,16 +1,36 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Azure.DigitalTwins.Core.QueryBuilder;
 using FluentAssertions;
 using NUnit.Framework;
+using Azure.DigitalTwins.Core;
+using System.Linq.Expressions;
+using System.Diagnostics;
 
-namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
+#pragma warning disable SA1402 // File may only contain a single type
+#pragma warning disable SA1649 // File name should match first type name
+
+namespace Linq
 {
-    public class AdtQueryBuilderTests
+    public class ConferenceRoom
+    {
+        public string Room { get; set; }
+        public string Factory { get; set; }
+        public double Temperature { get; set; }
+        public double Humidity { get; set; }
+        public int Occupants { get; set; }
+    }
+
+    public class Hack
     {
         [Test]
-        public void zzz_Select_AllSimple()
+        public void Select_AllSimple()
         {
             new AdtQueryBuilder()
                 .SelectAll()
@@ -20,10 +40,12 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
                 .GetQueryText()
                 .Should()
                 .Be("SELECT * FROM DigitalTwins");
+
+            new DigitalTwinsQuery<BasicDigitalTwin>().ToString().Should().Be("SELECT * FROM DigitalTwins");
         }
 
         [Test]
-        public void zzz_Select_SingleProperty()
+        public void Select_SingleProperty()
         {
             new AdtQueryBuilder()
                 .Select("Room")
@@ -32,16 +54,40 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
                 .GetQueryText()
                 .Should()
                 .Be("SELECT Room FROM DigitalTwins");
-    }
+
+            new DigitalTwinsQuery<BasicDigitalTwin>()
+                .Select("Room")
+                .ToString()
+                .Should()
+                .Be("SELECT Room FROM DigitalTwins");
+
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Select(r => r.Room)
+                .ToString()
+                .Should()
+                .Be("SELECT Room FROM DigitalTwins");
+        }
 
         [Test]
-        public void zzz_Select_MultipleProperties()
+        public void Select_MultipleProperties()
         {
             new AdtQueryBuilder()
                 .Select("Room", "Factory", "Temperature", "Humidity")
                 .From(AdtCollection.DigitalTwins)
                 .Build()
                 .GetQueryText()
+                .Should()
+                .Be("SELECT Room, Factory, Temperature, Humidity FROM DigitalTwins");
+
+            new DigitalTwinsQuery<BasicDigitalTwin>()
+                .Select("Room", "Factory", "Temperature", "Humidity")
+                .ToString()
+                .Should()
+                .Be("SELECT Room, Factory, Temperature, Humidity FROM DigitalTwins");
+
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Select(r => r.Room, r => r.Factory, r => r.Temperature, r => r.Humidity)
+                .ToString()
                 .Should()
                 .Be("SELECT Room, Factory, Temperature, Humidity FROM DigitalTwins");
         }
@@ -148,7 +194,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void zzz_Where_Comparison()
+        public void Where_Comparison()
         {
             new AdtQueryBuilder()
                 .Select("*")
@@ -159,6 +205,18 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
                 .GetQueryText()
                 .Should()
                 .Be("SELECT * FROM DigitalTwins WHERE Temperature >= 50");
+
+            new DigitalTwinsQuery<BasicDigitalTwin>()
+                .Where("Temperature >= 50")
+                .GetQueryText()
+                .Should()
+                .Be("SELECT * FROM DigitalTwins WHERE Temperature >= 50");
+
+            //new DigitalTwinsQuery<ConferenceRoom>()
+            //    .Where(r => r.Temperature >= 50)
+            //    .GetQueryText()
+            //    .Should()
+            //    .Be("SELECT * FROM DigitalTwins WHERE Temperature >= 50");
         }
 
         [Test]
@@ -218,7 +276,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void zzz_Where_MultipleWhere()
+        public void Where_MultipleWhere()
         {
             new AdtQueryBuilder()
                 .Select("Temperature")
@@ -228,6 +286,28 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
                 .And()
                 .CustomClause("Occupants < 10")
                 .Build()
+                .GetQueryText()
+                .Should()
+                .Be("SELECT Temperature FROM DigitalTwins WHERE IS_DEFINED(Humidity) AND Occupants < 10");
+
+            new DigitalTwinsQuery<BasicDigitalTwin>()
+                .Select("Temperature")
+                .Where("IS_DEFINED(Humidity) AND Occupants < 10")
+                .GetQueryText()
+                .Should()
+                .Be("SELECT Temperature FROM DigitalTwins WHERE IS_DEFINED(Humidity) AND Occupants < 10");
+
+            new DigitalTwinsQuery<BasicDigitalTwin>()
+                .Select("Temperature")
+                .Where("IS_DEFINED(Humidity)")
+                .Where("Occupants < 10")
+                .GetQueryText()
+                .Should()
+                .Be("SELECT Temperature FROM DigitalTwins WHERE IS_DEFINED(Humidity) AND Occupants < 10");
+
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Select(r => r.Temperature)
+                .Where(r => DigitalTwinsFunctions.IsDefined(r.Humidity) && r.Occupants < 10)
                 .GetQueryText()
                 .Should()
                 .Be("SELECT Temperature FROM DigitalTwins WHERE IS_DEFINED(Humidity) AND Occupants < 10");
@@ -372,5 +452,147 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
                 .Should()
                 .Be("SELECT * FROM DigitalTwins WHERE  = 10");
         }
+    }
+
+    public class DigitalTwinsQuery<T>
+    {
+        public DigitalTwinsQuery() : this(AdtCollection.DigitalTwins) { }
+
+        public DigitalTwinsQuery(AdtCollection collection) : this(
+            collection switch
+            {
+                AdtCollection.DigitalTwins => "DigitalTwins",
+                AdtCollection.Relationships => "Relationships",
+                _ => throw new ArgumentException("Unknown collection", nameof(collection))
+            })
+        { }
+
+        public DigitalTwinsQuery(string customCollection)
+        {
+            _collection = customCollection;
+        }
+
+        public DigitalTwinsQuery<T> Select(params string[] propertyNames)
+        {
+            _propertyNames ??= new List<string>();
+            _propertyNames.AddRange(propertyNames);
+
+            return this;
+        }
+
+        public DigitalTwinsQuery<T> Select(params Expression<Func<T, object>>[] selectors)
+        {
+            _propertyNames ??= new List<string>();
+            _propertyNames.AddRange(selectors.Select(GetPropertyName));
+
+            //foreach (var selector in selectors)
+            //{
+            //    _propertyNames.Add(GetPropertyName(selector));
+            //}
+
+            return this;
+        }
+
+        private static void Ensure(bool condition, string message=null)
+        {
+            if (!condition)
+            {
+                throw new InvalidOperationException(message ?? "Invalid expression.");
+            }
+        }
+
+        private static string GetPropertyName(Expression<Func<T, object>> selector)
+        {
+            LambdaExpression lambda = selector as LambdaExpression;
+            Ensure(lambda != null); // TODO - write messages
+            Ensure(lambda.Parameters.Count == 1);
+
+            ParameterExpression param = lambda.Parameters[0];
+            Ensure(param.Type == typeof(T));    // derived classes? => Type.isAssignableFrom
+
+            Expression body = lambda.Body;
+            UnaryExpression conversion = body as UnaryExpression;
+
+            if (conversion != null)
+            {
+                Ensure(conversion.NodeType == ExpressionType.Convert);
+                body = conversion.Operand;
+            }
+
+            MemberExpression member = body as MemberExpression;
+            Ensure(member != null);
+            Ensure(member.Expression == param);
+            Ensure(member.Member.MemberType == System.Reflection.MemberTypes.Property);
+            // TODO - also support fields?
+
+            return member.Member.Name;
+        }
+
+        public DigitalTwinsQuery<T> Take(int count)
+        {
+            _top = count;
+            return this;
+        }
+
+        public DigitalTwinsQuery<T> Count()
+        {
+            _count = true;
+            return this;
+        }
+
+        public DigitalTwinsQuery<T> Where(string filter)
+        {
+            _clauses ??= new List<string>();
+            _clauses.Add(filter);
+
+            return this;
+        }
+        public DigitalTwinsQuery<T> Where(Expression<Func<T, bool>> filter)
+        {
+            _clauses ??= new List<string>();
+            //_clauses.Add(filter);
+            Assert.Inconclusive();
+
+            return this;
+        }
+
+        private string _collection;
+        private int? _top;
+        private bool _count;
+
+        private List<string> _propertyNames;
+        private List<string> _clauses;
+
+        public string GetQueryText()
+        {
+            AdtQueryBuilder query = new AdtQueryBuilder();
+            SelectAsQuery select =
+                _count ? query.SelectCount() :
+                _top != null && _propertyNames != null ? query.SelectTop(_top.Value, _propertyNames.ToArray()) :
+                _top != null ? query.SelectTopAll(_top.Value) :
+                _propertyNames != null ? query.Select(_propertyNames.ToArray()) :
+                query.SelectAll();
+
+            WhereStatement where = select.FromCustom(_collection);
+
+            if (_clauses?.Count > 0)
+            {
+                // TODO - change Where()
+                var custom = _clauses.Skip(1).Aggregate(
+                    where.Where().CustomClause(_clauses[0]),
+                    (expr, clause) => expr.And().CustomClause(clause));
+            }
+
+            return where
+                .Build()
+                .GetQueryText();
+        }
+
+        public override string ToString() => GetQueryText();
+    }
+
+    public static class DigitalTwinsFunctions
+    {
+        public static bool IsDefined(object value) => throw new NotImplementedException();
     }
 }

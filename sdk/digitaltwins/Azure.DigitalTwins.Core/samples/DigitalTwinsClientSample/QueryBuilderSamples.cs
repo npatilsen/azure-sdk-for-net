@@ -212,40 +212,37 @@ namespace Azure.DigitalTwins.Core.Samples
                 .Build();
             #endregion
 
-            AdtQuery test = new AdtQuery()
+            //////////////////////////////////////////////////////////////////////////////////////////////
+
+            // SELECT Temperature, Humidity FROM DigitalTwins WHERE IS_BOOL(is_occupied)
+            DigitalTwinsQueryBuilder test = new DigitalTwinsQueryBuilder()
                 .Select("Temperature", "Humidity")
                 .From(AdtCollection.DigitalTwins)
                 .WhereIsDefined("Occupants")
                 .And()
-                .WhereCustom("IS_BOOL(is_occupied)");         
-            
-            AdtQuery test2 = new AdtQuery()
+                .WhereCustom("IS_BOOL(is_occupied)");
+
+            // FROM DigitalTwins FROM Relationships SELECT Temperature, Humidity...
+            DigitalTwinsQueryBuilder test3 = new DigitalTwinsQueryBuilder()
+                .From(AdtCollection.DigitalTwins)
+                .Select("Temperature", "Humidity")
+                .From(AdtCollection.DigitalTwins)
+                .WhereIsDefined("Occupants")
+                .And()
+                .WhereCustom("IS_BOOL(is_occupied)");
+
+            // AND SELECT Temperature, Humidity FROM DigitalTwins WHERE IS_DEFINED(Occupants) AND IS_BOOL(is_occupied)
+            DigitalTwinsQueryBuilder test2 = new DigitalTwinsQueryBuilder()
                 .And()
                 .Select("Temperature", "Humidity")
                 .From(AdtCollection.DigitalTwins)
                 .WhereIsDefined("Occupants")
                 .And()
                 .WhereCustom("IS_BOOL(is_occupied)");
-            
-            AdtQuery test3 = new AdtQuery()
-                .From(AdtCollection.DigitalTwins)
-                .From(AdtCollection.Relationships)
-                .Select("Temperature", "Humidity")
-                .From(AdtCollection.DigitalTwins)
-                .WhereIsDefined("Occupants")
+
+            // AND Select Temperature, Humidity FROM DigitalTwins WHERE ... AND (Temperature > 30 AND SELECT someProperty) AND FROM DigitalTwins
+            DigitalTwinsQueryBuilder test6 = new DigitalTwinsQueryBuilder()
                 .And()
-                .WhereCustom("IS_BOOL(is_occupied)");
-                        
-            AdtQuery test4 = new AdtQuery()
-                .From(AdtCollection.DigitalTwins)
-                .From(AdtCollection.Relationships)
-                .Select("Temperature", "Humidity")
-                .From(AdtCollection.DigitalTwins)
-                .WhereIsDefined("Occupants")
-                .And()
-                .WhereCustom("IS_BOOL(is_occupied)");             
-            
-            AdtQuery test5 = new AdtQuery()
                 .Select("Temperature", "Humidity")
                 .From(AdtCollection.DigitalTwins)
                 .WhereIsDefined("Occupants")
@@ -255,9 +252,39 @@ namespace Azure.DigitalTwins.Core.Samples
                 .Parenthetical(q => q
                     .WhereCustom("Temperature > 30")
                     .And()
-                    .WhereCustom("Humidity < 20"));
+                    .Select("someProperty")
+                    .And()
+                    .From(AdtCollection.Relationships));
 
-            AdtQuery statement = new AdtQuery();
+
+            // SELECT Temperature, Humidity FROM DigitalTwins Where IS_DEFINED(Occupants) AND IS_BOOL(is_occupied)
+            // AND (Temperature > 30 AND Humidity < 20)
+            DigitalTwinsQueryBuilder test5 = new DigitalTwinsQueryBuilder()
+                .Select("Temperature", "Humidity")
+                .From(AdtCollection.DigitalTwins)
+                .WhereIsDefined("Occupants")
+                .And()
+                .WhereCustom("IS_BOOL(is_occupied)")
+                .And()
+                .Parenthetical(q => q
+                    .WhereCustom("Temperature > 30")
+                    .And()
+                    .WhereCustom("Humidity < 20"));  
+
+            DigitalTwinsQueryBuilder nestedAndTest = new DigitalTwinsQueryBuilder()
+                .Select("Temp")
+                .From(AdtCollection.DigitalTwins)
+                .WhereCustom("IS_BOOL(occupied)")
+                .And(q => q
+                    .WhereStartsWith("someString", "someOtherString")
+                    .And(q => q
+                        .WhereCustom("someCondition"))
+                        .And(q => q
+                            .WhereCustom("anotherCondition")));
+
+            // SELECT Temperature, Humidity FROM DigitalTwins Where IS_DEFINED(Occupants) AND IS_BOOL(is_occupied)
+            // AND (Temperature > 30 AND Humidity < 20)
+            DigitalTwinsQueryBuilder statement = new DigitalTwinsQueryBuilder();
             statement.Select("Temperature", "Humidity");
             statement.From(AdtCollection.DigitalTwins);
             statement.WhereIsDefined("Occupants");
@@ -271,34 +298,6 @@ namespace Azure.DigitalTwins.Core.Samples
                 q.WhereCustom("humidity > 20");
                 return q;
             });
-                        
-            AdtQuery test6 = new AdtQuery()
-                .And()
-                .Select("Temperature", "Humidity")
-                .From(AdtCollection.DigitalTwins)
-                .WhereIsDefined("Occupants")
-                .And()
-                .WhereCustom("IS_BOOL(is_occupied)")
-                .And()
-                .Parenthetical(q => q
-                    .WhereCustom("Temperature > 30")
-                    .And()
-                    .Select("someProperty")
-                    .And()
-                    .From(AdtCollection.Relationships)
-                    .WhereCustom("Humidity < 20"));
-
-
-            AdtQuery azadTest = new AdtQuery()
-                .Select("Temp")
-                .From(AdtCollection.DigitalTwins)
-                .WhereCustom("")
-                .And(q => 
-                    q.Select("*")
-                    .From(AdtCollection.DigitalTwins)
-                    .WhereCustom("")
-                    .And(q => q.WhereCustom(""))
-                .And(q => q.WhereCustom("")));
         }
     }
 }

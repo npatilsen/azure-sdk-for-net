@@ -10,7 +10,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     /// <summary>
     /// TODO.
     /// </summary>
-    public class AdtQuery
+    public class DigitalTwinsQueryBuilder
     {
         private List<SelectClause> _selectClauses;
         private List<FromClause> _fromClauses;
@@ -20,7 +20,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <summary>
         /// TODO.
         /// </summary>
-        public AdtQuery()
+        public DigitalTwinsQueryBuilder()
         {
             _selectClauses = new List<SelectClause>();
             _fromClauses = new List<FromClause>();
@@ -32,7 +32,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        public AdtQuery Select(params string[] args)
+        public DigitalTwinsQueryBuilder Select(params string[] args)
         {
             // append something into clauses
             Console.WriteLine(args);
@@ -46,7 +46,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="count">The argument for TOP(), ie the number of instances to return.</param>
         /// <param name="args">The arguments that can be optionally passed with top (e.g., property name).</param>
         /// <returns> Query that contains a select clause. </returns>
-        public AdtQuery SelectTop(int count, params string[] args)
+        public DigitalTwinsQueryBuilder SelectTop(int count, params string[] args)
         {
             var topArg = new StringBuilder().Append($"{QueryConstants.Top}({count})").Append(' ');
 
@@ -63,7 +63,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="count">The argument for TOP(), i.e. the number of results to return.</param>
         /// <returns> Query that contains a select clause. </returns>
-        public AdtQuery SelectTopAll(int count)
+        public DigitalTwinsQueryBuilder SelectTopAll(int count)
         {
             // turn into correct format -- eg. SELECT TOP(3)
             var topArg = new StringBuilder().Append($"{QueryConstants.Top}({count})").Append(' ');
@@ -76,7 +76,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// Used when applying the <see href="https://docs.microsoft.com/en-us/azure/digital-twins/reference-query-clause-select#select-count">COUNT()</see> aggregate from the ADT query language.
         /// </summary>
         /// <returns> Query that contains a select clause. </returns>
-        public AdtQuery SelectCount()
+        public DigitalTwinsQueryBuilder SelectCount()
         {
             string countArg = $"{QueryConstants.Count}() ";
 
@@ -89,7 +89,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="customQuery">Query in string format.</param>
         /// <returns> Query that contains a select clause. </returns>
-        public AdtQuery SelectCustom(string customQuery)
+        public DigitalTwinsQueryBuilder SelectCustom(string customQuery)
         {
             Console.WriteLine(customQuery);
             //_clause = new SelectClause(new string[] { customQuery });
@@ -102,7 +102,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="field">The proper name for the selectable property in the ADT Query Language.</param>
         /// <param name="alias">The alias to be assigned to the return contents in the query response.</param>
         /// <returns> Query that contains an aliased select clause. </returns>
-        public AdtQuery SelectAs(string field, string alias)
+        public DigitalTwinsQueryBuilder SelectAs(string field, string alias)
         {
             _selectClauses.Add(new SelectClause(new string[] { $"{field} {QueryConstants.As} {alias}" }));
             return this;
@@ -113,7 +113,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="collection"></param>
         /// <returns></returns>
-        public AdtQuery From(AdtCollection collection)
+        public DigitalTwinsQueryBuilder From(AdtCollection collection)
         {
             Console.WriteLine(collection);
             return this;
@@ -125,7 +125,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="collection">The collection being queried from.</param>
         /// <param name="alias">The alias being assigned to the collection being queried from.</param>
         /// <returns> ADT query with select from clauses. </returns>
-        public AdtQuery From(AdtCollection collection, string alias)
+        public DigitalTwinsQueryBuilder From(AdtCollection collection, string alias)
         {
             Console.WriteLine(collection);
             Console.WriteLine(alias);
@@ -139,7 +139,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="collection">The name of the collection.</param>
         /// <returns> ADT query with select and from clauses. </returns>
-        public AdtQuery FromCustom(string collection)
+        public DigitalTwinsQueryBuilder FromCustom(string collection)
         {
             Console.WriteLine(collection);
             //_clause = new FromClause(collection);
@@ -154,7 +154,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="comparisonOperator">The comparison operator being invoked.</param>
         /// <param name="value">The value being checked against a Field.</param>
         /// <returns>Logical operator to combine different WHERE functions or conditions.</returns>
-        public AdtQuery Compare<T>(string field, QueryComparisonOperator comparisonOperator, T value)
+        public DigitalTwinsQueryBuilder Compare<T>(string field, QueryComparisonOperator comparisonOperator, T value)
         {
             _whereClauses.Add(new WhereClause(new ComparisonCondition<T>(field, comparisonOperator, value)));
             return this;
@@ -167,7 +167,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="value">User specified property to look for.</param>
         /// <param name="searched">Field of possible options to check for the 'value' parameter.</param>
         /// <returns>Logical operator to combine different WHERE functions or conditions.</returns>
-        public AdtQuery Contains(string value, string[] searched)
+        public DigitalTwinsQueryBuilder Contains(string value, string[] searched)
         {
             _whereClauses.Add(new WhereClause(new ContainsCondition(value, QueryContainsOperator.In, searched)));
             return this;
@@ -180,7 +180,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="value">User specified property to look for.</param>
         /// <param name="searched">Field of possible options to check for the 'value' parameter.</param>
         /// <returns>Logical operator to combine different WHERE functions or conditions.</returns>
-        public AdtQuery NotContains(string value, string[] searched)
+        public DigitalTwinsQueryBuilder NotContains(string value, string[] searched)
         {
             _whereClauses.Add(new WhereClause(new ContainsCondition(value, QueryContainsOperator.NotIn, searched)));
             return this;
@@ -191,7 +191,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public AdtQuery WhereCustom(string condition)
+        public DigitalTwinsQueryBuilder WhereCustom(string condition)
         {
             Console.WriteLine(condition);
             return this;
@@ -202,7 +202,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="property">The property that the query is looking for as defined.</param>
         /// <returns>TODO.</returns>
-        public AdtQuery WhereIsDefined(string property)
+        public DigitalTwinsQueryBuilder WhereIsDefined(string property)
         {
             Console.WriteLine(property);
             return this;
@@ -213,7 +213,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="expression">The expression being checked for null.</param>
         /// <returns>Logical operator to combine different WHERE functions or conditions.</returns>
-        public AdtQuery WhereIsNull(string expression)
+        public DigitalTwinsQueryBuilder WhereIsNull(string expression)
         {
             _whereClauses.Add(new WhereClause($"{QueryConstants.IsNull}({expression})"));
             return this;
@@ -225,7 +225,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="stringToCheck">String to check the beginning of.</param>
         /// <param name="beginningString">String representing the beginning to check for.</param>
         /// <returns>Logical operator to combine different WHERE functions or conditions.</returns>
-        public AdtQuery WhereStartsWith(string stringToCheck, string beginningString)
+        public DigitalTwinsQueryBuilder WhereStartsWith(string stringToCheck, string beginningString)
         {
             _whereClauses.Add(new WhereClause($"{QueryConstants.StartsWith}({stringToCheck}, '{beginningString}')"));
             return this;
@@ -237,7 +237,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="stringToCheck">String to check the ending of.</param>
         /// <param name="endingString">String representing the ending to check for.</param>
         /// <returns>Logical operator to combine different WHERE functions or conditions.</returns>
-        public AdtQuery WhereEndsWith(string stringToCheck, string endingString)
+        public DigitalTwinsQueryBuilder WhereEndsWith(string stringToCheck, string endingString)
         {
             _whereClauses.Add(new WhereClause($"{QueryConstants.EndsWith}({stringToCheck}, '{endingString}')"));
             return this;
@@ -249,7 +249,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="model">Model Id to check for.</param>
         /// <param name="exact">Whether or not an exact match is required.</param>
         /// <returns>Logical operator to combine different WHERE functions or conditions.</returns>
-        public AdtQuery WhereIsOfModel(string model, bool exact = false)
+        public DigitalTwinsQueryBuilder WhereIsOfModel(string model, bool exact = false)
         {
             var whereClauseArg = new StringBuilder();
             whereClauseArg.Append($"{QueryConstants.IsOfModel}('{model}'");
@@ -271,7 +271,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="expression">The expression that the query is looking for as a specified type.</param>
         /// <param name="type">The type in the ADT query language being checked for.</param>
         /// <returns>Logical operator to combine different WHERE functions or conditions.</returns>
-        public AdtQuery WhereIsOfType(string expression, AdtDataType type)
+        public DigitalTwinsQueryBuilder WhereIsOfType(string expression, AdtDataType type)
         {
             string functionName = QueryConstants.DataTypeToFunctionNameMap[type];
             _whereClauses.Add(new WhereClause($"{functionName}({expression})"));
@@ -283,10 +283,10 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="nested">WhereLogic methods to perform within a set of parenthesis.</param>
         /// <returns> Logical operator to combine different WHERE functions or conditions.</returns>
-        public AdtQuery Parenthetical(Func<AdtQuery, AdtQuery> nested)
+        public DigitalTwinsQueryBuilder Parenthetical(Func<DigitalTwinsQueryBuilder, DigitalTwinsQueryBuilder> nested)
         {
             // RENAME?
-            var nestedLogic = new AdtQuery();
+            var nestedLogic = new DigitalTwinsQueryBuilder();
             nested.Invoke(nestedLogic);
 
             return this;
@@ -297,10 +297,10 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="nested">WhereLogic methods to perform within a set of parenthesis.</param>
         /// <returns> Logical operator to combine different WHERE functions or conditions.</returns>
-        public AdtQuery And(Func<AdtQuery, AdtQuery> nested)
+        public DigitalTwinsQueryBuilder And(Func<DigitalTwinsQueryBuilder, DigitalTwinsQueryBuilder> nested)
         {
             // RENAME?
-            var nestedLogic = new AdtQuery();
+            var nestedLogic = new DigitalTwinsQueryBuilder();
             nested.Invoke(nestedLogic);
 
             return this;
@@ -310,7 +310,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// TODO.
         /// </summary>
         /// <returns></returns>
-        public AdtQuery And()
+        public DigitalTwinsQueryBuilder And()
         {
             return this;
         }
