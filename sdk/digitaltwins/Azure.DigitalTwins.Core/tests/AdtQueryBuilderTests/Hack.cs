@@ -767,21 +767,27 @@ namespace Linq
         public string GetQueryText()
         {
             AdtQueryBuilder query = new AdtQueryBuilder();
-            SelectAsQuery select =
-                _count ? query.SelectCount() :
-                _top != null && _propertyNames != null ? query.SelectTop(_top.Value, _propertyNames.ToArray()) :
-                _top != null ? query.SelectTopAll(_top.Value) :
-                _propertyNames != null ? query.Select(_propertyNames.ToArray()) :
-                query.SelectAll();
+            SelectAsQuery select = _count
+                ? query.SelectCount()
+                : _top != null && _propertyNames != null
+                    ? query.SelectTop(_top.Value, _propertyNames.ToArray())
+                    : _top != null
+                        ? query.SelectTopAll(_top.Value)
+                        : _propertyNames != null
+                            ? query.Select(_propertyNames.ToArray())
+                            : query.SelectAll();
 
             WhereStatement where = select.FromCustom(_collection);
 
             if (_clauses?.Count > 0)
             {
                 // TODO - change Where()
-                var custom = _clauses.Skip(1).Aggregate(
-                    where.Where().CustomClause(_clauses[0]),
-                    (expr, clause) => expr.And().CustomClause(clause));
+                var custom = _clauses
+                    .Skip(1)
+                    .Aggregate(
+                        where
+                            .Where()
+                            .CustomClause(_clauses[0]), (expr, clause) => expr.And().CustomClause(clause));
             }
 
             return where
