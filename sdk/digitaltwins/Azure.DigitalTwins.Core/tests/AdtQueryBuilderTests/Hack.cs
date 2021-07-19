@@ -72,6 +72,12 @@ namespace Linq
         }
 
         [Test]
+        public void Select_SelectAllRelationships()
+        {
+            new DigitalTwinsQuery<ConferenceRoom>(AdtCollection.Relationships).GetQueryText().Should().Be("SELECT * FROM Relationships");
+        }
+
+        [Test]
          public void Select_MultipleProperties()
         {
             new AdtQueryBuilder()
@@ -520,6 +526,85 @@ namespace Linq
         }
     }
 
+    public class Samples
+    {
+        public void Stuff()
+        {
+            // SELECT * FROM DigitalTwins
+            DigitalTwinsQuery selectAll = new DigitalTwinsQuery();
+            var selectAllConferenceRoom = new DigitalTwinsQuery<ConferenceRoom>();
+
+            // SELECT * FROM Relationships
+            var selectRelationships = new DigitalTwinsQuery<ConferenceRoom>(AdtCollection.Relationships);
+
+            // SELECT Temperature FROM DigitalTwins
+            DigitalTwinsQuery selectSingleProperty = new DigitalTwinsQuery()
+                .Select("Temperature");
+
+            // selecting from a non BasicDigitalTwin
+            // note that if temperature isn't a field of the Conference Room class, an error will appear
+            var anotherSingleSelect = new DigitalTwinsQuery<ConferenceRoom>()
+                .Select(r => r.Temperature);
+
+            // SELECT Temperature, Humidity FROM DigitalTwins
+            var selectMultiple = new DigitalTwinsQuery()
+                .Select("Temperature", "Humidity");
+
+            var anotherSelectMultiple = new DigitalTwinsQuery<ConferenceRoom>()
+                .Select(r => r.Temperature, r => r.Humidity);
+
+            // SELECT * FROM DigitalTwins WHERE Temperature >= 50
+            var whereComparison = new DigitalTwinsQuery<ConferenceRoom>()
+                .Where(r => r.Temperature >= 50);
+
+            // SELECT * FROM DigitalTwins WHERE Location NIN ['Paris', 'Tokyo', 'Madrid', 'Prague']
+            string[] cities = new string[] { "Paris", "Tokyo", "Madrid", "Prague" };
+            var whereContains = new DigitalTwinsQuery()
+                .Where($"Location NIN {cities}");
+
+            // SELECT Temperature FROM DigitalTwins WHERE IS_DEFINED(Humidity) AND Occupants < 10
+            int count = 10;
+            new DigitalTwinsQuery()
+                .Select("Temperature")
+                .Where($"IS_DEFINED(Humidity) AND Occupants < {count}");
+
+            new DigitalTwinsQuery()
+                .Select("Temperature")
+                .Where($"IS_DEFINED(Humidity)")
+                .Where($"Occupants < {count}");
+
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Select(r => r.Temperature)
+                .Where(r => DigitalTwinsFunctions.IsDefined(r.Humidity) && r.Occupants < 10);
+
+            // SELECT * FROM DigitalTwins WHERE (IS_NUMBER(Humidity) OR IS_PRIMITIVE(Humidity)) OR (IS_NUMBER(Temperature) OR IS_PRIMITIVE(Temperature))
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Where(r =>
+                (
+                    DigitalTwinsFunctions.IsNumber(r.Humidity) ||
+                    DigitalTwinsFunctions.IsPrimitive(r.Humidity)
+                )
+                ||
+                (
+                    DigitalTwinsFunctions.IsNumber(r.Temperature) ||
+                    DigitalTwinsFunctions.IsPrimitive(r.Temperature)
+                ));
+
+            // SELECT * FROM DigitalTwins WHERE (IS_NUMBER(Humidity) OR IS_PRIMITIVE(Humidity)) AND (IS_NUMBER(Temperature) OR IS_PRIMITIVE(Temperature))
+            new DigitalTwinsQuery<ConferenceRoom>()
+               .Where(r =>
+               (
+                    DigitalTwinsFunctions.IsNumber(r.Humidity) ||
+                    DigitalTwinsFunctions.IsPrimitive(r.Humidity)
+               )
+               &&
+               (
+                    DigitalTwinsFunctions.IsNumber(r.Temperature) ||
+                    DigitalTwinsFunctions.IsPrimitive(r.Temperature))
+               );
+        }
+    }
+
     public class DigitalTwinsQuery : DigitalTwinsQuery<BasicDigitalTwin>
     {
         public new DigitalTwinsQuery Select(params string[] propertyNames)
@@ -533,14 +618,25 @@ namespace Linq
     {
         public DigitalTwinsQuery() : this(AdtCollection.DigitalTwins) { }
 
-        public DigitalTwinsQuery(AdtCollection collection) : this(
-            collection switch
+        public DigitalTwinsQuery(AdtCollection collection)
+        {
+            _collection = collection switch
             {
                 AdtCollection.DigitalTwins => "DigitalTwins",
                 AdtCollection.Relationships => "Relationships",
                 _ => throw new ArgumentException("Unknown collection", nameof(collection))
-            })
-        { }
+            };
+        }
+
+        // Alternate constructor with more "complicated" syntax
+        //public DigitalTwinsQuery(AdtCollection collection) : this(
+        //    collection switch
+        //    {
+        //        AdtCollection.DigitalTwins => "DigitalTwins",
+        //        AdtCollection.Relationships => "Relationships",
+        //        _ => throw new ArgumentException("Unknown collection", nameof(collection))
+        //    })
+        //{ }
 
         public DigitalTwinsQuery(string customCollection)
         {
