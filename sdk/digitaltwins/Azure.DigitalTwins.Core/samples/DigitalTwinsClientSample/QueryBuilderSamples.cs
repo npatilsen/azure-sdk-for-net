@@ -215,7 +215,7 @@ namespace Azure.DigitalTwins.Core.Samples
             //////////////////////////////////////////////////////////////////////////////////////////////
 
             // SELECT Temperature, Humidity FROM DigitalTwins WHERE IS_BOOL(is_occupied)
-            DigitalTwinsQueryBuilder test = new DigitalTwinsQueryBuilder()
+            DigitalTwinsQuery test = new DigitalTwinsQuery()
                 .Select("Temperature", "Humidity")
                 .From(AdtCollection.DigitalTwins)
                 .WhereIsDefined("Occupants")
@@ -223,7 +223,7 @@ namespace Azure.DigitalTwins.Core.Samples
                 .WhereCustom("IS_BOOL(is_occupied)");
 
             // FROM DigitalTwins FROM Relationships SELECT Temperature, Humidity...
-            DigitalTwinsQueryBuilder test3 = new DigitalTwinsQueryBuilder()
+            DigitalTwinsQuery test3 = new DigitalTwinsQuery()
                 .From(AdtCollection.DigitalTwins)
                 .Select("Temperature", "Humidity")
                 .From(AdtCollection.DigitalTwins)
@@ -232,7 +232,7 @@ namespace Azure.DigitalTwins.Core.Samples
                 .WhereCustom("IS_BOOL(is_occupied)");
 
             // AND SELECT Temperature, Humidity FROM DigitalTwins WHERE IS_DEFINED(Occupants) AND IS_BOOL(is_occupied)
-            DigitalTwinsQueryBuilder test2 = new DigitalTwinsQueryBuilder()
+            DigitalTwinsQuery test2 = new DigitalTwinsQuery()
                 .And()
                 .Select("Temperature", "Humidity")
                 .From(AdtCollection.DigitalTwins)
@@ -241,7 +241,7 @@ namespace Azure.DigitalTwins.Core.Samples
                 .WhereCustom("IS_BOOL(is_occupied)");
 
             // AND Select Temperature, Humidity FROM DigitalTwins WHERE ... AND (Temperature > 30 AND SELECT someProperty) AND FROM DigitalTwins
-            DigitalTwinsQueryBuilder test6 = new DigitalTwinsQueryBuilder()
+            DigitalTwinsQuery test6 = new DigitalTwinsQuery()
                 .And()
                 .Select("Temperature", "Humidity")
                 .From(AdtCollection.DigitalTwins)
@@ -259,7 +259,7 @@ namespace Azure.DigitalTwins.Core.Samples
 
             // SELECT Temperature, Humidity FROM DigitalTwins Where IS_DEFINED(Occupants) AND IS_BOOL(is_occupied)
             // AND (Temperature > 30 AND Humidity < 20)
-            DigitalTwinsQueryBuilder test5 = new DigitalTwinsQueryBuilder()
+            DigitalTwinsQuery test5 = new DigitalTwinsQuery()
                 .Select("Temperature", "Humidity")
                 .From(AdtCollection.DigitalTwins)
                 .WhereIsDefined("Occupants")
@@ -271,7 +271,7 @@ namespace Azure.DigitalTwins.Core.Samples
                     .And()
                     .WhereCustom("Humidity < 20"));  
 
-            DigitalTwinsQueryBuilder nestedAndTest = new DigitalTwinsQueryBuilder()
+            DigitalTwinsQuery nestedAndTest = new DigitalTwinsQuery()
                 .Select("Temp")
                 .From(AdtCollection.DigitalTwins)
                 .WhereCustom("IS_BOOL(occupied)")
@@ -284,7 +284,7 @@ namespace Azure.DigitalTwins.Core.Samples
 
             // SELECT Temperature, Humidity FROM DigitalTwins Where IS_DEFINED(Occupants) AND IS_BOOL(is_occupied)
             // AND (Temperature > 30 AND Humidity < 20)
-            DigitalTwinsQueryBuilder statement = new DigitalTwinsQueryBuilder();
+            DigitalTwinsQuery statement = new DigitalTwinsQuery();
             statement.Select("Temperature", "Humidity");
             statement.From(AdtCollection.DigitalTwins);
             statement.WhereIsDefined("Occupants");
