@@ -264,7 +264,12 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                     nameof(DigitalTwinsFunctions.IsDefined) => "IS_DEFINED",
                     nameof(DigitalTwinsFunctions.IsNumber) => "IS_NUMBER",
                     nameof(DigitalTwinsFunctions.IsPrimitive) => "IS_PRIMITIVE",
+                    nameof(DigitalTwinsFunctions.IsBool) => "IS_BOOL",
+                    nameof(DigitalTwinsFunctions.IsString) => "IS_STRING",
+                    nameof(DigitalTwinsFunctions.IsObject) => "IS_OBJECT",
+                    nameof(DigitalTwinsFunctions.IsNull) => "IS_NULL",
                     nameof(DigitalTwinsFunctions.StartsWith) => "STARTSWITH",
+                    nameof(DigitalTwinsFunctions.IsOfModel) => "IS_OF_MODEL",
                     _ => throw NotSupported(m)
                 };
 

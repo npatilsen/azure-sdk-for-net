@@ -149,6 +149,12 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                 return Expression.Call(typeof(DigitalTwinsFunctions).GetMethod(nameof(DigitalTwinsFunctions.StartsWith)), visited.Object, visited.Arguments[0]);
             }
 
+            //// TOOD -- fixme
+            //if (visited.Method.Name == "IsOfModel" && visited.Method.DeclaringType == typeof(string))
+            //{
+            //    return Expression.Call(typeof(DigitalTwinsFunctions).GetMethod(nameof(DigitalTwinsFunctions.StartsWith)), visited.Object, visited.Arguments[0]);
+            //}
+
             // Let everything through
             if (visited.Method.DeclaringType == typeof(DigitalTwinsFunctions))
             {

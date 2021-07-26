@@ -196,15 +196,11 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void zzz_Where_Override()
+        public void Where_Override()
         {
-            new AdtQueryBuilder()
-                .SelectAll()
-                .From(AdtCollection.DigitalTwins)
-                .Where()
-                .CustomClause("IS_OF_MODEL('dtmi:example:room;1', exact)")
-                .Build()
-                .GetQueryText()
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .WhereCustom("IS_OF_MODEL('dtmi:example:room;1', exact)")
+                .ToString()
                 .Should()
                 .Be("SELECT * FROM DigitalTwins WHERE IS_OF_MODEL('dtmi:example:room;1', exact)");
         }
@@ -212,6 +208,12 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void zzz_Where_IsOfModel()
         {
+            //new DigitalTwinsQuery<ConferenceRoom>()
+            //    .Where(r => DigitalTwinsFunctions.IsOfModel("dtmi:example:room;1", true))
+            //    .ToString()
+            //    .Should()
+            //    .Be("");
+
             new AdtQueryBuilder()
                 .SelectAll()
                 .From(AdtCollection.DigitalTwins)
@@ -224,34 +226,77 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void zzz_Where_IsBool()
+        public void Where_IsBool()
         {
-            new AdtQueryBuilder()
-                .SelectAll()
-                .From(AdtCollection.Relationships)
-                .Where()
-                .IsOfType("isOccupied", AdtDataType.AdtBool)
-                .Build()
-                .GetQueryText()
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Where(r => DigitalTwinsFunctions.IsBool(r.IsOccupied))
+                .ToString()
                 .Should()
-                .Be("SELECT * FROM Relationships WHERE IS_BOOL(isOccupied)");
+                .Be("SELECT * FROM DigitalTwins WHERE IS_BOOL(IsOccupied)");
+        }
+
+        [Test]
+        public void Where_IsDefined()
+        {
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Where(r => DigitalTwinsFunctions.IsDefined(r.Temperature))
+                .ToString()
+                .Should()
+                .Be("SELECT * FROM DigitalTwins WHERE IS_DEFINED(Temperature)");
+        }
+
+        [Test] public void Where_IsPrimitive()
+        {
+            new DigitalTwinsQuery<ConferenceRoom>()
+               .Where(r => DigitalTwinsFunctions.IsPrimitive(r.Temperature))
+               .ToString()
+               .Should()
+               .Be("SELECT * FROM DigitalTwins WHERE IS_PRIMITIVE(Temperature)");
+        }
+
+        [Test]
+        public void Where_IsNumber()
+        {
+            new DigitalTwinsQuery<ConferenceRoom>()
+               .Where(r => DigitalTwinsFunctions.IsNumber(r.Temperature))
+                .ToString()
+                .Should()
+                .Be("SELECT * FROM DigitalTwins WHERE IS_NUMBER(Temperature)");
+        }
+
+        [Test]
+        public void Where_IsString()
+        {
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Where(r => DigitalTwinsFunctions.IsString(r.Factory))
+                .ToString()
+                .Should()
+                .Be("SELECT * FROM DigitalTwins WHERE IS_STRING(Factory)");
+        }
+
+        [Test]
+        public void Where_IsObject()
+        {
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Where(r => DigitalTwinsFunctions.IsObject(r.Factory))
+                .ToString()
+                .Should()
+                .Be("SELECT * FROM DigitalTwins WHERE IS_OBJECT(Factory)");
+        }
+
+        [Test]
+        public void Where_IsNull()
+        {
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Where(r => DigitalTwinsFunctions.IsNull(r.Temperature))
+                .ToString()
+                .Should()
+                .Be("SELECT * FROM DigitalTwins WHERE IS_NULL(Temperature)");
         }
 
         [Test]
         public void Where_MultipleWhere()
         {
-            new AdtQueryBuilder()
-                .Select("Temperature")
-                .From(AdtCollection.DigitalTwins)
-                .Where()
-                .IsDefined("Humidity")
-                .And()
-                .CustomClause("Occupants < 10")
-                .Build()
-                .GetQueryText()
-                .Should()
-                .Be("SELECT Temperature FROM DigitalTwins WHERE IS_DEFINED(Humidity) AND Occupants < 10");
-
             int count = 10;
             new DigitalTwinsQuery<ConferenceRoom>()
                 .Select("Temperature")
@@ -341,45 +386,19 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void zzz_WhereLogic_Null()
-        {
-            new AdtQueryBuilder()
-                .SelectAll()
-                .From(AdtCollection.DigitalTwins)
-                .Where()
-                .IsOfModel(null)
-                .Build()
-                .GetQueryText()
-                .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE IS_OF_MODEL('')");
-        }
-
-        [Test]
-        public void zzz_WhereLogic_Is_Of_Type()
-        {
-            new AdtQueryBuilder()
-                .SelectAll()
-                .From(AdtCollection.DigitalTwins)
-                .Where()
-                .IsOfType(null, AdtDataType.AdtBool)
-                .Build()
-                .GetQueryText()
-                .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE IS_BOOL()");
-        }
-
-        [Test]
         public void zzz_WhereLogic_StartsEndsWith_Null()
         {
-            new AdtQueryBuilder()
-                .SelectAll()
-                .From(AdtCollection.DigitalTwins)
-                .Where()
-                .StartsWith(null, null)
-                .Build()
-                .GetQueryText()
-                .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE STARTSWITH(, '')");
+            "".Should().Be("");
+            //new DigitalTwinsQuery<ConferenceRoom>()
+            //    .Where(r => DigitalTwinsFunctions.StartsWith(null, null))
+            //    .ToString()
+            //    .Should()
+            //    .Be("SELECT * FROM DigitalTwins WHERE STARTSWITH(, '')");
+        }
+
+        public void zzz_WhereLogic_IsOfModel_Null()
+        {
+            "".Should().Be("");
         }
 
         [Test]
@@ -400,31 +419,15 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void zzz_WhereLogic_ContainsNotContains_Null()
+        public void WhereLogic_ContainsNotContains_Null()
         {
-            new AdtQueryBuilder()
-                .SelectAll()
-                .From(AdtCollection.DigitalTwins)
-                .Where()
-                .Contains(null, null)
-                .Build()
+            string[] cities = null;
+            string property = null;
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Where($"{property} NIN {cities}")
                 .GetQueryText()
                 .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE  IN []");
-        }
-
-        [Test]
-        public void zzz_WhereLogic_Compare_Null()
-        {
-            new AdtQueryBuilder()
-                .SelectAll()
-                .From(AdtCollection.DigitalTwins)
-                .Where()
-                .Compare(null, QueryComparisonOperator.Equal, 10)
-                .Build()
-                .GetQueryText()
-                .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE  = 10");
+                .Be("SELECT * FROM DigitalTwins WHERE null NIN null");
         }
     }
 }

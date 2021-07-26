@@ -16,5 +16,6 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         public double Temperature { get; set; }
         public double Humidity { get; set; }
         public int Occupants { get; set; }
+        public bool IsOccupied { get; set; }
     }
 }

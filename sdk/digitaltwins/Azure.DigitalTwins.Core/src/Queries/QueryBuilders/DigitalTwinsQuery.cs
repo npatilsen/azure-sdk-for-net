@@ -138,6 +138,19 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         }
 
         /// <summary>
+        /// TODO.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public DigitalTwinsQuery<T> WhereCustom(string filter)
+        {
+            _clauses ??= new List<string>();
+            _clauses.Add(filter);
+
+            return this;
+        }
+
+        /// <summary>
         /// TODO
         /// </summary>
         public DigitalTwinsQuery<T> Where(FormattableString filter) => Where(filter, null);

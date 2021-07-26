@@ -35,6 +35,42 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         public static bool IsPrimitive(object value) => throw new NotImplementedException();
 
         /// <summary>
+        /// TODO.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool IsBool(object value) => throw new NotImplementedException();
+
+        /// <summary>
+        /// TOOD
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool IsString(object value) => throw new NotImplementedException();
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool IsObject(object value) => throw new NotImplementedException();
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static bool IsNull(object value) => throw new NotImplementedException();
+
+        /// <summary>
+        /// TODO.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="exact"></param>
+        /// <returns></returns>
+        public static bool IsOfModel(string model, bool exact) => throw new NotImplementedException();
+
+        /// <summary>
         /// TODO
         /// </summary>
         /// <param name="field"></param>
