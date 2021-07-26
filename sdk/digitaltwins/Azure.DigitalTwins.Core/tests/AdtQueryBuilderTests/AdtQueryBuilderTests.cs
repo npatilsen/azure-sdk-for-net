@@ -12,29 +12,12 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_AllSimple()
         {
-            new AdtQueryBuilder()
-                .SelectAll()
-                .From(AdtCollection.DigitalTwins)
-                .Where()
-                .BuildLogic()
-                .GetQueryText()
-                .Should()
-                .Be("SELECT * FROM DigitalTwins");
-
             new DigitalTwinsQuery<ConferenceRoom>().ToString().Should().Be("SELECT * FROM DigitalTwins");
         }
 
         [Test]
         public void Select_SingleProperty()
         {
-            new AdtQueryBuilder()
-                .Select("Room")
-                .From(AdtCollection.DigitalTwins)
-                .Build()
-                .GetQueryText()
-                .Should()
-                .Be("SELECT Room FROM DigitalTwins");
-
             new DigitalTwinsQuery<ConferenceRoom>()
                 .Select("Room")
                 .ToString()
@@ -57,14 +40,6 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_MultipleProperties()
         {
-            new AdtQueryBuilder()
-                .Select("Room", "Factory", "Temperature", "Humidity")
-                .From(AdtCollection.DigitalTwins)
-                .Build()
-                .GetQueryText()
-                .Should()
-                .Be("SELECT Room, Factory, Temperature, Humidity FROM DigitalTwins");
-
             new DigitalTwinsQuery<ConferenceRoom>()
                 .Select("Room", "Factory", "Temperature", "Humidity")
                 .ToString()
@@ -86,48 +61,48 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void zzz_Select_Aggregates_Top_All()
+        public void Select_Aggregates_Top_All()
         {
-            new AdtQueryBuilder()
-                .SelectTopAll(5)
-                .From(AdtCollection.DigitalTwins)
-                .Build()
-                .GetQueryText()
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Take(5)
+                .ToString()
                 .Should()
                 .Be("SELECT TOP(5) FROM DigitalTwins");
         }
 
         [Test]
-        public void zzz_Select_Aggregates_Top_Properties()
+        public void Select_Aggregates_Top_Properties()
         {
-            new AdtQueryBuilder()
-                .SelectTop(3, "Temperature", "Humidity")
-                .From(AdtCollection.DigitalTwins)
-                .Build()
-                .GetQueryText()
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Select("Temperature", "Humidity")
+                .Take(3)
+                .ToString()
+                .Should()
+                .Be("SELECT TOP(3) Temperature, Humidity FROM DigitalTwins");
+
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Select(r => r.Temperature, r => r.Humidity)
+                .Take(3)
+                .ToString()
                 .Should()
                 .Be("SELECT TOP(3) Temperature, Humidity FROM DigitalTwins");
         }
 
-        public void zzz_Select_Aggregates_Count()
+        public void Select_Aggregates_Count()
         {
-            new AdtQueryBuilder()
-                .SelectCount()
-                .From(AdtCollection.DigitalTwins)
-                .Build()
-                .GetQueryText()
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Count()
+                .ToString()
                 .Should()
                 .Be("SELECT COUNT() FROM DigitalTwins");
         }
 
         [Test]
-        public void zzz_Select_Override()
+        public void Select_Override()
         {
-            new AdtQueryBuilder()
+            new DigitalTwinsQuery<ConferenceRoom>()
                 .SelectCustom("TOP(3) Room, Temperature")
-                .From(AdtCollection.DigitalTwins)
-                .Build()
-                .GetQueryText()
+                .ToString()
                 .Should()
                 .Be("SELECT TOP(3) Room, Temperature FROM DigitalTwins");
         }
@@ -189,16 +164,6 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Where_Comparison()
         {
-            new AdtQueryBuilder()
-                .Select("*")
-                .From(AdtCollection.DigitalTwins)
-                .Where()
-                .Compare("Temperature", QueryComparisonOperator.GreaterOrEqual, 50)
-                .Build()
-                .GetQueryText()
-                .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE Temperature >= 50");
-
             new DigitalTwinsQuery<ConferenceRoom>()
                 .Where($"Temperature >= {50}")
                 .GetQueryText()
@@ -215,16 +180,6 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Where_Contains()
         {
-            new AdtQueryBuilder()
-                .SelectAll()
-                .From(AdtCollection.DigitalTwins)
-                .Where()
-                .NotContains("Location", new string[] { "Paris", "Tokyo", "Madrid", "Prague" })
-                .Build()
-                .GetQueryText()
-                .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE Location NIN ['Paris', 'Tokyo', 'Madrid', 'Prague']");
-
             string city = "Paris";
             new DigitalTwinsQuery<ConferenceRoom>()
                 .Where($"Location NIN [{city}, 'Tokyo', 'Madrid', 'Prague']")
@@ -358,48 +313,28 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void zzz_Select_Null()
+        public void Select_EmptyString()
         {
-            new AdtQueryBuilder()
-                .Select(null)
-                .From(AdtCollection.DigitalTwins)
-                .Build()
-                .GetQueryText()
-                .Should()
-                .Be("SELECT  FROM DigitalTwins");
-        }
-
-        [Test]
-        public void zzz_Select_EmptyString()
-        {
-            new AdtQueryBuilder()
+            new DigitalTwinsQuery<ConferenceRoom>()
                 .Select("")
-                .From(AdtCollection.DigitalTwins)
-                .Build()
                 .GetQueryText()
                 .Should()
                 .Be("SELECT  FROM DigitalTwins");
         }
 
         [Test]
-        public void zzz_FromCustom_Null()
+        public void FromCustom_Null()
         {
-            new AdtQueryBuilder()
-                .SelectAll()
-                .FromCustom(null)
-                .Build()
+            new DigitalTwinsQuery<ConferenceRoom>(null)
                 .GetQueryText()
                 .Should()
                 .Be("SELECT * FROM");
         }
 
         [Test]
-        public void zzz_FromCustom_EmptyString()
+        public void FromCustom_EmptyString()
         {
-            new AdtQueryBuilder()
-                .SelectAll()
-                .FromCustom("")
-                .Build()
+            new DigitalTwinsQuery<ConferenceRoom>("")
                 .GetQueryText()
                 .Should()
                 .Be("SELECT * FROM");
@@ -450,16 +385,6 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void WhereLogic_StartEndsWith()
         {
-            new AdtQueryBuilder()
-                .SelectAll()
-                .From(AdtCollection.DigitalTwins)
-                .Where()
-                .StartsWith("Room", "3")
-                .Build()
-                .GetQueryText()
-                .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE STARTSWITH(Room, '3')");
-
             new DigitalTwinsQuery<ConferenceRoom>()
                 .Where(r => DigitalTwinsFunctions.StartsWith(r.Room, "3"))
                 .GetQueryText()

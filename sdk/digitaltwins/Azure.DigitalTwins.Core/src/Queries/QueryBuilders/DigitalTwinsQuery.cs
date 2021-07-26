@@ -21,6 +21,12 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         public DigitalTwinsQuery() : this(AdtCollection.DigitalTwins) { }
 
         /// <summary>
+        /// TODO.
+        /// </summary>
+        /// <param name="customColection"></param>
+        public DigitalTwinsQuery(string customColection) => _collection = customColection;
+
+        /// <summary>
         /// TODO
         /// </summary>
         /// <param name="collection"></param>
@@ -32,25 +38,6 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                 AdtCollection.Relationships => "Relationships",
                 _ => throw new ArgumentException("Unknown collection", nameof(collection))
             };
-        }
-
-        // Alternate constructor with more "complicated" syntax
-        //public DigitalTwinsQuery(AdtCollection collection) : this(
-        //    collection switch
-        //    {
-        //        AdtCollection.DigitalTwins => "DigitalTwins",
-        //        AdtCollection.Relationships => "Relationships",
-        //        _ => throw new ArgumentException("Unknown collection", nameof(collection))
-        //    })
-        //{ }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <param name="customCollection"></param>
-        public DigitalTwinsQuery(string customCollection)
-        {
-            _collection = customCollection;
         }
 
         /// <summary>
@@ -72,12 +59,17 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             _propertyNames ??= new List<string>();
             _propertyNames.AddRange(selectors.Select(GetPropertyName));
 
-            // alternate way of doing this
-            //foreach (var selector in selectors)
-            //{
-            //    _propertyNames.Add(GetPropertyName(selector));
-            //}
+            return this;
+        }
 
+        /// <summary>
+        /// TODO.
+        /// </summary>
+        /// <param name="customClause"></param>
+        /// <returns></returns>
+        public DigitalTwinsQuery<T> SelectCustom(string customClause)
+        {
+            _customSelect = customClause;
             return this;
         }
 
@@ -192,6 +184,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         }
 
         private string _collection;
+        private string _customSelect;
         private int? _top;
         private bool _count;
 
@@ -210,9 +203,11 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                     ? query.SelectTop(_top.Value, _propertyNames.ToArray())
                     : _top != null
                         ? query.SelectTopAll(_top.Value)
-                        : _propertyNames != null
-                            ? query.Select(_propertyNames.ToArray())
-                            : query.SelectAll();
+                        : _customSelect != null
+                            ? query.SelectCustom(_customSelect)
+                            : _propertyNames != null
+                                ? query.Select(_propertyNames.ToArray())
+                                : query.SelectAll();
 
             WhereStatement where = select.FromCustom(_collection);
 
