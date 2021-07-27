@@ -24,7 +24,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             return PartialEval(expression, Evaluator.CanBeEvaluatedLocally);
         }
 
-        private static bool CanBeEvaluatedLocally(Expression expression)
+        internal static bool CanBeEvaluatedLocally(Expression expression)
         {
             int rootResourceSet = 10000;
             return expression.NodeType != ExpressionType.Parameter &&

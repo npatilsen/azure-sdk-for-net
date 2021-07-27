@@ -8,6 +8,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Diagnostics;
 
 namespace Azure.DigitalTwins.Core.QueryBuilder
 {
@@ -269,13 +270,49 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                     nameof(DigitalTwinsFunctions.IsObject) => "IS_OBJECT",
                     nameof(DigitalTwinsFunctions.IsNull) => "IS_NULL",
                     nameof(DigitalTwinsFunctions.StartsWith) => "STARTSWITH",
+                    nameof(DigitalTwinsFunctions.EndsWith) => "ENDSWITH",
                     nameof(DigitalTwinsFunctions.IsOfModel) => "IS_OF_MODEL",
                     _ => throw NotSupported(m)
                 };
 
+                if (m.Method.Name == nameof(DigitalTwinsFunctions.StartsWith) || m.Method.Name == nameof(DigitalTwinsFunctions.EndsWith))
+                {
+                    Debug.Assert(m.Arguments.Count == 2);
+
+                    if (m.Arguments[0] is ConstantExpression c && c.Value == null)
+                    {
+                        throw new InvalidOperationException($"{nameof(DigitalTwinsFunctions)}.{nameof(DigitalTwinsFunctions.StartsWith)} requires non-null values");
+                    }
+
+                    if (m.Arguments[1] is ConstantExpression c2 && c2.Value == null)
+                    {
+                        throw new InvalidOperationException($"{nameof(DigitalTwinsFunctions)}.{nameof(DigitalTwinsFunctions.StartsWith)} requires non-null values");
+                    }
+                }
+
                 _filter.Append(name).Append('(');
 
-                if (m.Arguments.Count > 0)
+                if (m.Method.Name == nameof(DigitalTwinsFunctions.IsOfModel))
+                {
+                    Debug.Assert(m.Arguments.Count >= 1);
+                    Visit(m.Arguments[0]);
+
+                    if (m.Arguments.Count == 2)
+                    {
+                        ConstantExpression c = m.Arguments[1] as ConstantExpression;
+                        Debug.Assert(c != null);
+                        Debug.Assert(c.Value is bool);
+
+                        bool isExact = (bool)c.Value;
+
+                        if (isExact)
+                        {
+                            _filter.Append(", exact");
+                        }
+                    }
+                }
+
+                else if (m.Arguments.Count > 0)
                 {
                     bool first = true;
 

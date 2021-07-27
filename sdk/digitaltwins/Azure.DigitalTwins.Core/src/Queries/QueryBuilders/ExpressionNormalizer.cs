@@ -143,17 +143,15 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                 return CreateCompareExpression(visited.Arguments[0], visited.Arguments[1]);
             }
 
-            // TODO: Potentially normalize other things like `== null` or `is null` to `IsNull`
             if (visited.Method.Name == nameof(string.StartsWith) && visited.Method.DeclaringType == typeof(string))
             {
                 return Expression.Call(typeof(DigitalTwinsFunctions).GetMethod(nameof(DigitalTwinsFunctions.StartsWith)), visited.Object, visited.Arguments[0]);
             }
 
-            //// TOOD -- fixme
-            //if (visited.Method.Name == "IsOfModel" && visited.Method.DeclaringType == typeof(string))
-            //{
-            //    return Expression.Call(typeof(DigitalTwinsFunctions).GetMethod(nameof(DigitalTwinsFunctions.StartsWith)), visited.Object, visited.Arguments[0]);
-            //}
+            if (visited.Method.Name == nameof(string.EndsWith) && visited.Method.DeclaringType == typeof(string))
+            {
+                return Expression.Call(typeof(DigitalTwinsFunctions).GetMethod(nameof(DigitalTwinsFunctions.EndsWith)), visited.Object, visited.Arguments[0]);
+            }
 
             // Let everything through
             if (visited.Method.DeclaringType == typeof(DigitalTwinsFunctions))

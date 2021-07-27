@@ -61,6 +61,19 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
+        public void Select_SelectAsWithoutLinq()
+        {
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Select("Humidity")
+                .SelectAs("Room", "R")
+                .SelectAs("Temperature", "Temp")
+                .Select("Factory")
+                .ToString()
+                .Should()
+                .Be("SELECT Humidity, Room AS R, Temperature AS Temp, Factory FROM DigitalTwins");
+        }
+
+        [Test]
         public void Select_Aggregates_Top_All()
         {
             new DigitalTwinsQuery<ConferenceRoom>()
@@ -108,54 +121,47 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void zzz_Select_SelectAs()
+        public void Select_SelectAs()
         {
-            new AdtQueryBuilder()
+            new DigitalTwinsQuery<ConferenceRoom>()
                 .SelectAs("Temperature", "Temp")
                 .SelectAs("Humidity", "Hum")
-                .From(AdtCollection.DigitalTwins)
-                .Build()
                 .GetQueryText()
                 .Should()
                 .Be("SELECT Temperature AS Temp, Humidity AS Hum FROM DigitalTwins");
         }
 
         [Test]
-        public void zzz_Select_SelectAsChainedWithSelect()
+        public void Select_SelectAsChainedWithSelect()
         {
-            new AdtQueryBuilder()
+            new DigitalTwinsQuery<ConferenceRoom>()
                 .Select("Occupants", "T")
                 .SelectAs("Temperature", "Temp")
                 .SelectAs("Humidity", "Hum")
-                .From(AdtCollection.DigitalTwins)
-                .Build()
                 .GetQueryText()
                 .Should()
                 .Be("SELECT Occupants, T, Temperature AS Temp, Humidity AS Hum FROM DigitalTwins");
         }
 
         [Test]
-        public void zzz_Select_SelectAs_CustomFrom()
+        public void Select_SelectAs_CustomFrom()
         {
-            new AdtQueryBuilder()
+            new DigitalTwinsQuery<ConferenceRoom>("DigitalTwins T")
                 .SelectAs("T.Temperature", "Temp")
-                .FromCustom("DigitalTwins T")
-                .Build()
                 .GetQueryText()
                 .Should()
                 .Be("SELECT T.Temperature AS Temp FROM DigitalTwins T");
         }
 
+        // FROM ALIASING IS NOT SUPPORTED
+        // TODO -- does this work? check query explorer
         [Test]
-        public void zzz_Select_SelectAs_FromAlias()
+        public void Select_SelectAs_FromAlias()
         {
-            new AdtQueryBuilder()
+            new DigitalTwinsQuery<ConferenceRoom>("DigitalTwins T")
                 .Select("T.Temperature")
                 .SelectAs("T.Humidity", "Hum")
-                .From(AdtCollection.DigitalTwins, "T")
-                .Where()
-                .Compare("T.Temperature", QueryComparisonOperator.GreaterOrEqual, 50)
-                .Build()
+                .Where(r => r.Temperature >= 50)
                 .GetQueryText()
                 .Should()
                 .Be("SELECT T.Temperature, T.Humidity AS Hum FROM DigitalTwins T WHERE T.Temperature >= 50");
@@ -199,30 +205,26 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         public void Where_Override()
         {
             new DigitalTwinsQuery<ConferenceRoom>()
-                .WhereCustom("IS_OF_MODEL('dtmi:example:room;1', exact)")
+                .WhereCustom($"IS_OF_MODEL('dtmi:example:room;1', exact)")
                 .ToString()
                 .Should()
                 .Be("SELECT * FROM DigitalTwins WHERE IS_OF_MODEL('dtmi:example:room;1', exact)");
         }
 
         [Test]
-        public void zzz_Where_IsOfModel()
+        public void Where_IsOfModel()
         {
-            //new DigitalTwinsQuery<ConferenceRoom>()
-            //    .Where(r => DigitalTwinsFunctions.IsOfModel("dtmi:example:room;1", true))
-            //    .ToString()
-            //    .Should()
-            //    .Be("");
-
-            new AdtQueryBuilder()
-                .SelectAll()
-                .From(AdtCollection.DigitalTwins)
-                .Where()
-                .IsOfModel("dtmi:example:room;1", true)
-                .Build()
-                .GetQueryText()
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Where(_ => DigitalTwinsFunctions.IsOfModel("dtmi:example:room;1", true))
+                .ToString()
                 .Should()
                 .Be("SELECT * FROM DigitalTwins WHERE IS_OF_MODEL('dtmi:example:room;1', exact)");
+
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Where(_ => DigitalTwinsFunctions.IsOfModel("dtmi:example:room;1"))
+                .ToString()
+                .Should()
+                .Be("SELECT * FROM DigitalTwins WHERE IS_OF_MODEL('dtmi:example:room;1')");
         }
 
         [Test]
@@ -322,6 +324,22 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
+        public void WhereLogic_StartEndsWith()
+        {
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Where(r => DigitalTwinsFunctions.StartsWith(r.Room, "3"))
+                .GetQueryText()
+                .Should()
+                .Be("SELECT * FROM DigitalTwins WHERE STARTSWITH(Room, '3')");
+
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Where(r => r.Room.EndsWith("3"))
+                .GetQueryText()
+                .Should()
+                .Be("SELECT * FROM DigitalTwins WHERE ENDSWITH(Room, '3')");
+        }
+
+        [Test]
         public void MultipleNested()
         {
             new AdtQueryBuilder()
@@ -386,36 +404,23 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void zzz_WhereLogic_StartsEndsWith_Null()
+        public void WhereLogic_StartsEndsWith_Null()
         {
-            "".Should().Be("");
-            //new DigitalTwinsQuery<ConferenceRoom>()
-            //    .Where(r => DigitalTwinsFunctions.StartsWith(null, null))
-            //    .ToString()
-            //    .Should()
-            //    .Be("SELECT * FROM DigitalTwins WHERE STARTSWITH(, '')");
-        }
-
-        public void zzz_WhereLogic_IsOfModel_Null()
-        {
-            "".Should().Be("");
+            new DigitalTwinsQuery<ConferenceRoom>()
+                .Where(r => DigitalTwinsFunctions.StartsWith(null, null))
+                .ToString()
+                .Should()
+                .Be("SELECT * FROM DigitalTwins WHERE STARTSWITH(, '')");
         }
 
         [Test]
-        public void WhereLogic_StartEndsWith()
+        public void WhereLogic_IsOfModel_Null()
         {
             new DigitalTwinsQuery<ConferenceRoom>()
-                .Where(r => DigitalTwinsFunctions.StartsWith(r.Room, "3"))
-                .GetQueryText()
+                .Where(r => DigitalTwinsFunctions.IsOfModel(null))
+                .ToString()
                 .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE STARTSWITH(Room, '3')");
-
-            // alternate type of writing
-            new DigitalTwinsQuery<ConferenceRoom>()
-                .Where(r => r.Room.StartsWith("3"))
-                .GetQueryText()
-                .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE STARTSWITH(Room, '3')");
+                .Be("SELECT * FROM DigitalTwins WHERE IS_OF_MODEL('dtmi: example:room;1', exact)");
         }
 
         [Test]
