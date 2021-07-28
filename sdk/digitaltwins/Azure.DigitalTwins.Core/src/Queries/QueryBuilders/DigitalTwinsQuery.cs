@@ -68,10 +68,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         {
             foreach (var propertyName in selectors.Select(GetPropertyName))
             {
-                if (string.IsNullOrEmpty(propertyName))
-                {
-                    throw new InvalidOperationException("Cannot select null.");
-                }
+                Argument.AssertNotNullOrWhiteSpace(propertyName, nameof(propertyName));
             }
 
             _propertyNames ??= new List<string>();
@@ -87,10 +84,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <returns>Query that contains a select clause.</returns>
         public DigitalTwinsQuery<T> SelectCustom(string customClause)
         {
-            if (string.IsNullOrEmpty(customClause))
-            {
-                throw new InvalidOperationException("Cannot select null.");
-            }
+            Argument.AssertNotNullOrWhiteSpace(customClause, nameof(customClause));
 
             _customSelect = customClause;
             return this;
@@ -104,10 +98,8 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <returns>Query that contains an aliased select clause.</returns>
         public DigitalTwinsQuery<T> SelectAs(string propertyName, string alias)
         {
-            if (string.IsNullOrEmpty(propertyName) || string.IsNullOrEmpty(alias))
-            {
-                throw new InvalidOperationException("Cannot select null or alias a selectable property to null.");
-            }
+            Argument.AssertNotNullOrWhiteSpace(propertyName, nameof(propertyName));
+            Argument.AssertNotNullOrWhiteSpace(alias, nameof(alias));
 
             _propertyNames ??= new List<string>();
 
@@ -190,7 +182,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
 
                 if (args[i] == "null")
                 {
-                    throw new InvalidOperationException("Cannot pass null into logical statement.");
+                    throw new InvalidOperationException();
                 }
             }
 
