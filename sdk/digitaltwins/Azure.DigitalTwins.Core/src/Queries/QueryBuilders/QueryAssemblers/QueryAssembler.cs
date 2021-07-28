@@ -1,14 +1,15 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Azure.Core;
 
 namespace Azure.DigitalTwins.Core.QueryBuilder
 {
-    /// <summary>
-    /// Azure DigitalTwins Query builder that facilitates writing queries against ADT instances.
-    /// </summary>
-    public class AdtQueryBuilder
+    internal class QueryAssembler
     {
         private readonly SelectQuery _selectQuery;
         private readonly FromQuery _fromQuery;
@@ -19,7 +20,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <summary>
         /// Initializes an instance of an AdtQueryBuilder object.
         /// </summary>
-        public AdtQueryBuilder()
+        public QueryAssembler()
         {
             _whereLogic = new WhereLogic(this);
             _whereStatement = new WhereStatement(this, _whereLogic);

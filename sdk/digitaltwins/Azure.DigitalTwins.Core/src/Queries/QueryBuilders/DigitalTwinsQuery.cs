@@ -19,7 +19,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <summary>
         /// Create a Digital Twins query and set the queried collection to DigitalTwins by default.
         /// </summary>
-        public DigitalTwinsQuery() : this(AdtCollection.DigitalTwins) { }
+        public DigitalTwinsQuery() : this(DigitalTwinsCollection.DigitalTwins) { }
 
         /// <summary>
         /// Create a Digital Twins query and set the queried collection to a custom string.
@@ -36,12 +36,12 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// Create a Digital Twins query and set the queried collection to DigitalTwins or Relationships.
         /// </summary>
         /// <param name="collection">Collection to query from.</param>
-        public DigitalTwinsQuery(AdtCollection collection)
+        public DigitalTwinsQuery(DigitalTwinsCollection collection)
         {
             _collection = collection switch
             {
-                AdtCollection.DigitalTwins => "DigitalTwins",
-                AdtCollection.Relationships => "Relationships",
+                DigitalTwinsCollection.DigitalTwins => "DigitalTwins",
+                DigitalTwinsCollection.Relationships => "Relationships",
                 _ => throw new ArgumentException("Unknown collection", nameof(collection))
             };
         }
@@ -68,7 +68,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         {
             foreach (var propertyName in selectors.Select(GetPropertyName))
             {
-                if (propertyName == "null" || string.IsNullOrEmpty(propertyName))
+                if (string.IsNullOrEmpty(propertyName))
                 {
                     throw new InvalidOperationException("Cannot select null.");
                 }
@@ -276,8 +276,8 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <returns>String represenation of query.</returns>
         public string GetQueryText()
         {
-            AdtQueryBuilder query = new AdtQueryBuilder();
-            SelectAsQuery select = _count
+            QueryAssembler query = new QueryAssembler();
+            SelectAsQuery selectClause = _count
                 ? query.SelectCount()
                 : _top != null && _propertyNames != null
                     ? query.SelectTop(_top.Value, _propertyNames.ToArray())
@@ -289,19 +289,19 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                                 ? query.Select(_propertyNames.ToArray())
                                 : query.SelectAll();
 
-            WhereStatement where = select.FromCustom(_collection);
+            WhereStatement whereClause = selectClause.FromCustom(_collection);
 
             if (_clauses?.Count > 0)
             {
                 var custom = _clauses
-                    .Skip(1)
-                    .Aggregate(
-                        where
-                            .Where()
-                            .CustomClause(_clauses[0]), (expr, clause) => expr.And().CustomClause(clause));
+                     .Skip(1)
+                     .Aggregate(
+                         whereClause
+                             .Where()
+                             .CustomClause(_clauses[0]), (expr, clause) => expr.And().CustomClause(clause));
             }
 
-            return where
+            return whereClause
                 .Build()
                 .GetQueryText();
         }

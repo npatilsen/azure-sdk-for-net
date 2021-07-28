@@ -8,12 +8,12 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     /// <summary>
     /// Query that already contains a SELECT and FROM clause.
     /// </summary>
-    public class WhereStatement : QueryBase
+    internal class WhereStatement : QueryBase
     {
         private readonly WhereLogic _upstreamWhereLogic;
-        private readonly AdtQueryBuilder _parent;
+        private readonly QueryAssembler _parent;
 
-        internal WhereStatement(AdtQueryBuilder parent, WhereLogic upstreamWhere)
+        internal WhereStatement(QueryAssembler parent, WhereLogic upstreamWhere)
         {
             _parent = parent;
             _upstreamWhereLogic = upstreamWhere;
@@ -29,7 +29,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         }
 
         /// <inheritdoc/>
-        public override AdtQueryBuilder Build()
+        public override QueryAssembler Build()
         {
             return _parent;
         }

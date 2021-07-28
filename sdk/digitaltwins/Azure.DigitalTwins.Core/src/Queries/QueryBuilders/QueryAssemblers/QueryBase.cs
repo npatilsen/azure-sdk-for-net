@@ -6,13 +6,13 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     /// <summary>
     /// Parent class for all query clauses.
     /// </summary>
-    public abstract class QueryBase
+    internal abstract class QueryBase
     {
         /// <summary>
         /// Used to construct final query.
         /// </summary>
         /// <returns> Parent querybuilder class. </returns>
-        public abstract AdtQueryBuilder Build();
+        public abstract QueryAssembler Build();
 
         /// <summary>
         /// Represents a query clause in string format.

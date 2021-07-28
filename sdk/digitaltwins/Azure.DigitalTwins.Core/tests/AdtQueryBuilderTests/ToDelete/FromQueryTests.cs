@@ -13,7 +13,7 @@ namespace Azure.DigitalTwins.Core.Tests
         public void FromQuery_DigitalTwins()
         {
             var query = new FromQuery(null, null);
-            query.From(AdtCollection.DigitalTwins);
+            query.From(DigitalTwinsCollection.DigitalTwins);
             query.GetQueryText()
                 .Should()
                 .Be("FROM DigitalTwins");
@@ -23,7 +23,7 @@ namespace Azure.DigitalTwins.Core.Tests
         public void FromQuery_Relationships()
         {
             var query = new FromQuery(null, null);
-            query.From(AdtCollection.Relationships);
+            query.From(DigitalTwinsCollection.Relationships);
             query.GetQueryText()
                 .Should()
                 .Be("FROM Relationships");

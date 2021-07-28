@@ -37,7 +37,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectAll()
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
                 .BuildLogic()
                 .GetQueryText()
@@ -52,7 +52,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .Select("Room")
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Build()
                 .GetQueryText()
                 .Should()
@@ -74,7 +74,7 @@ namespace Linq
         [Test]
         public void Select_SelectAllRelationships()
         {
-            new DigitalTwinsQuery<ConferenceRoom>(AdtCollection.Relationships).GetQueryText().Should().Be("SELECT * FROM Relationships");
+            new DigitalTwinsQuery<ConferenceRoom>(DigitalTwinsCollection.Relationships).GetQueryText().Should().Be("SELECT * FROM Relationships");
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .Select("Room", "Factory", "Temperature", "Humidity")
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Build()
                 .GetQueryText()
                 .Should()
@@ -113,7 +113,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectTopAll(5)
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Build()
                 .GetQueryText()
                 .Should()
@@ -125,7 +125,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectTop(3, "Temperature", "Humidity")
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Build()
                 .GetQueryText()
                 .Should()
@@ -136,7 +136,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectCount()
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Build()
                 .GetQueryText()
                 .Should()
@@ -148,7 +148,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectCustom("TOP(3) Room, Temperature")
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Build()
                 .GetQueryText()
                 .Should()
@@ -161,7 +161,7 @@ namespace Linq
             new AdtQueryBuilder()
                 .SelectAs("Temperature", "Temp")
                 .SelectAs("Humidity", "Hum")
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Build()
                 .GetQueryText()
                 .Should()
@@ -175,7 +175,7 @@ namespace Linq
                 .Select("Occupants", "T")
                 .SelectAs("Temperature", "Temp")
                 .SelectAs("Humidity", "Hum")
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Build()
                 .GetQueryText()
                 .Should()
@@ -200,7 +200,7 @@ namespace Linq
             new AdtQueryBuilder()
                 .Select("T.Temperature")
                 .SelectAs("T.Humidity", "Hum")
-                .From(AdtCollection.DigitalTwins, "T")
+                .From(DigitalTwinsCollection.DigitalTwins, "T")
                 .Where()
                 .Compare("T.Temperature", QueryComparisonOperator.GreaterOrEqual, 50)
                 .Build()
@@ -214,7 +214,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .Select("*")
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
                 .Compare("Temperature", QueryComparisonOperator.GreaterOrEqual, 50)
                 .Build()
@@ -240,7 +240,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectAll()
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
                 .NotContains("Location", new string[] { "Paris", "Tokyo", "Madrid", "Prague" })
                 .Build()
@@ -268,7 +268,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectAll()
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
                 .CustomClause("IS_OF_MODEL('dtmi:example:room;1', exact)")
                 .Build()
@@ -282,7 +282,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectAll()
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
                 .IsOfModel("dtmi:example:room;1", true)
                 .Build()
@@ -296,9 +296,9 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectAll()
-                .From(AdtCollection.Relationships)
+                .From(DigitalTwinsCollection.Relationships)
                 .Where()
-                .IsOfType("isOccupied", AdtDataType.AdtBool)
+                .IsOfType("isOccupied", DigitalTwinsDataType.AdtBool)
                 .Build()
                 .GetQueryText()
                 .Should()
@@ -310,7 +310,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .Select("Temperature")
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
                 .IsDefined("Humidity")
                 .And()
@@ -349,17 +349,17 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectAll()
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
                 .Parenthetical(q => q
-                    .IsOfType("Humidity", AdtDataType.AdtNumber)
+                    .IsOfType("Humidity", DigitalTwinsDataType.AdtNumber)
                     .Or()
-                    .IsOfType("Humidity", AdtDataType.AdtPrimative))
+                    .IsOfType("Humidity", DigitalTwinsDataType.AdtPrimative))
                 .Or()
                 .Parenthetical(q => q
-                    .IsOfType("Temperature", AdtDataType.AdtNumber)
+                    .IsOfType("Temperature", DigitalTwinsDataType.AdtNumber)
                     .Or()
-                    .IsOfType("Temperature", AdtDataType.AdtPrimative))
+                    .IsOfType("Temperature", DigitalTwinsDataType.AdtPrimative))
                 .Build()
                 .GetQueryText()
                 .Should()
@@ -385,7 +385,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .Select(null)
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Build()
                 .GetQueryText()
                 .Should()
@@ -397,7 +397,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .Select("")
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Build()
                 .GetQueryText()
                 .Should()
@@ -433,7 +433,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectAll()
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
                 .IsOfModel(null)
                 .Build()
@@ -447,9 +447,9 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectAll()
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
-                .IsOfType(null, AdtDataType.AdtBool)
+                .IsOfType(null, DigitalTwinsDataType.AdtBool)
                 .Build()
                 .GetQueryText()
                 .Should()
@@ -461,7 +461,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectAll()
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
                 .StartsWith(null, null)
                 .Build()
@@ -475,7 +475,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectAll()
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
                 .StartsWith("Room", "3")
                 .Build()
@@ -502,7 +502,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectAll()
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
                 .Contains(null, null)
                 .Build()
@@ -516,7 +516,7 @@ namespace Linq
         {
             new AdtQueryBuilder()
                 .SelectAll()
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
                 .Compare(null, QueryComparisonOperator.Equal, 10)
                 .Build()
@@ -535,7 +535,7 @@ namespace Linq
             var selectAllConferenceRoom = new DigitalTwinsQuery<ConferenceRoom>();
 
             // SELECT * FROM Relationships
-            var selectRelationships = new DigitalTwinsQuery<ConferenceRoom>(AdtCollection.Relationships);
+            var selectRelationships = new DigitalTwinsQuery<ConferenceRoom>(DigitalTwinsCollection.Relationships);
 
             // SELECT Temperature FROM DigitalTwins
             DigitalTwinsQuery selectSingleProperty = new DigitalTwinsQuery()
@@ -616,14 +616,14 @@ namespace Linq
 
     public class DigitalTwinsQuery<T>
     {
-        public DigitalTwinsQuery() : this(AdtCollection.DigitalTwins) { }
+        public DigitalTwinsQuery() : this(DigitalTwinsCollection.DigitalTwins) { }
 
-        public DigitalTwinsQuery(AdtCollection collection)
+        public DigitalTwinsQuery(DigitalTwinsCollection collection)
         {
             _collection = collection switch
             {
-                AdtCollection.DigitalTwins => "DigitalTwins",
-                AdtCollection.Relationships => "Relationships",
+                DigitalTwinsCollection.DigitalTwins => "DigitalTwins",
+                DigitalTwinsCollection.Relationships => "Relationships",
                 _ => throw new ArgumentException("Unknown collection", nameof(collection))
             };
         }

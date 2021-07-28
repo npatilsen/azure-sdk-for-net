@@ -129,7 +129,7 @@ namespace Azure.DigitalTwins.Core.Tests
         public void WhereLogic_IsOfType_Bool()
         {
             var query = new WhereLogic(null);
-            query.IsOfType("HasTemperature", AdtDataType.AdtBool);
+            query.IsOfType("HasTemperature", DigitalTwinsDataType.AdtBool);
             query.GetLogicText()
                 .Should()
                 .Be("IS_BOOL(HasTemperature)");
@@ -139,7 +139,7 @@ namespace Azure.DigitalTwins.Core.Tests
         public void WhereLogic_IsOfType_Number()
         {
             var query = new WhereLogic(null);
-            query.IsOfType("Contains", AdtDataType.AdtNumber);
+            query.IsOfType("Contains", DigitalTwinsDataType.AdtNumber);
             query.GetLogicText()
                 .Should()
                 .Be("IS_NUMBER(Contains)");
@@ -149,7 +149,7 @@ namespace Azure.DigitalTwins.Core.Tests
         public void WhereLogic_IsOfType_String()
         {
             var query = new WhereLogic(null);
-            query.IsOfType("Status", AdtDataType.AdtString);
+            query.IsOfType("Status", DigitalTwinsDataType.AdtString);
             query.GetLogicText()
                 .Should()
                 .Be("IS_STRING(Status)");
@@ -159,7 +159,7 @@ namespace Azure.DigitalTwins.Core.Tests
         public void WhereLogic_IsOfType_Primative()
         {
             var query = new WhereLogic(null);
-            query.IsOfType("area", AdtDataType.AdtPrimative);
+            query.IsOfType("area", DigitalTwinsDataType.AdtPrimative);
             query.GetLogicText()
                 .Should()
                 .Be("IS_PRIMATIVE(area)");
@@ -169,7 +169,7 @@ namespace Azure.DigitalTwins.Core.Tests
         public void WhereLogic_IsOfType_Object()
         {
             var query = new WhereLogic(null);
-            query.IsOfType("MapObject", AdtDataType.AdtObject);
+            query.IsOfType("MapObject", DigitalTwinsDataType.AdtObject);
             query.GetLogicText()
                 .Should()
                 .Be("IS_OBJECT(MapObject)");
@@ -206,9 +206,9 @@ namespace Azure.DigitalTwins.Core.Tests
             query.Compare("Temperature", QueryComparisonOperator.Equal, 50)
                 .And()
                 .Parenthetical(q => q
-                   .IsOfType("Humidity", AdtDataType.AdtNumber)
+                   .IsOfType("Humidity", DigitalTwinsDataType.AdtNumber)
                    .And()
-                   .IsOfType("Humidity", AdtDataType.AdtPrimative));
+                   .IsOfType("Humidity", DigitalTwinsDataType.AdtPrimative));
             query.GetLogicText()
                 .Should()
                 .Be("Temperature = 50 AND (IS_NUMBER(Humidity) AND IS_PRIMATIVE(Humidity))");
@@ -221,12 +221,12 @@ namespace Azure.DigitalTwins.Core.Tests
             query.Compare("Temperature", QueryComparisonOperator.Equal, 50)
                 .And()
                 .Parenthetical(q => q
-                   .IsOfType("Humidity", AdtDataType.AdtNumber)
+                   .IsOfType("Humidity", DigitalTwinsDataType.AdtNumber)
                    .And()
                    .Parenthetical(q => q
                         .IsOfModel("dtmi:example:room;1", true)
                         .Or()
-                        .IsOfType("isOccupied", AdtDataType.AdtBool)));
+                        .IsOfType("isOccupied", DigitalTwinsDataType.AdtBool)));
             query.GetLogicText()
                 .Should()
                 .Be("Temperature = 50 AND (IS_NUMBER(Humidity) AND (IS_OF_MODEL('dtmi:example:room;1', exact) OR IS_BOOL(isOccupied)))");
@@ -237,14 +237,14 @@ namespace Azure.DigitalTwins.Core.Tests
         {
             var query = new WhereLogic(null);
             query.Parenthetical(q => q
-                    .IsOfType("Humidity", AdtDataType.AdtNumber)
+                    .IsOfType("Humidity", DigitalTwinsDataType.AdtNumber)
                     .Or()
-                    .IsOfType("Humidity", AdtDataType.AdtPrimative))
+                    .IsOfType("Humidity", DigitalTwinsDataType.AdtPrimative))
                 .Or()
                 .Parenthetical(q => q
-                    .IsOfType("Temperature", AdtDataType.AdtNumber)
+                    .IsOfType("Temperature", DigitalTwinsDataType.AdtNumber)
                     .Or()
-                    .IsOfType("Temperature", AdtDataType.AdtPrimative));
+                    .IsOfType("Temperature", DigitalTwinsDataType.AdtPrimative));
             query.GetLogicText()
                 .Should()
                 .Be("(IS_NUMBER(Humidity) OR IS_PRIMATIVE(Humidity)) OR (IS_NUMBER(Temperature) OR IS_PRIMATIVE(Temperature))");

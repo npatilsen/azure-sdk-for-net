@@ -6,7 +6,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     /// <summary>
     /// Logical operators (AND/OR) and the ADT query language.
     /// </summary>
-    public class LogicalOperator : QueryBase
+    internal class LogicalOperator : QueryBase
     {
         private WhereLogic _whereLogic;
 
@@ -36,7 +36,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         }
 
         /// <inheritdoc/>
-        public override AdtQueryBuilder Build()
+        public override QueryAssembler Build()
         {
             return _whereLogic.BuildLogic();
         }

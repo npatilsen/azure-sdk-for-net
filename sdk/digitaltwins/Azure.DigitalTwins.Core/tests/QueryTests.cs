@@ -121,7 +121,7 @@ namespace Azure.DigitalTwins.Core.Tests
                 // Build query using AdtQueryBuilder helper object
                 AdtQueryBuilder builtQuery = new AdtQueryBuilder()
                     .Select("*")
-                    .From(AdtCollection.DigitalTwins)
+                    .From(DigitalTwinsCollection.DigitalTwins)
                     .Build();
 
                 // act

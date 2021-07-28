@@ -35,7 +35,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_SelectAllRelationships()
         {
-            new DigitalTwinsQuery<ConferenceRoom>(AdtCollection.Relationships).GetQueryText().Should().Be("SELECT * FROM Relationships");
+            new DigitalTwinsQuery<ConferenceRoom>(DigitalTwinsCollection.Relationships).GetQueryText().Should().Be("SELECT * FROM Relationships");
         }
 
         [Test]
@@ -343,17 +343,17 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         {
             new AdtQueryBuilder()
                 .SelectAll()
-                .From(AdtCollection.DigitalTwins)
+                .From(DigitalTwinsCollection.DigitalTwins)
                 .Where()
                 .Parenthetical(q => q
-                    .IsOfType("Humidity", AdtDataType.AdtNumber)
+                    .IsOfType("Humidity", DigitalTwinsDataType.AdtNumber)
                     .Or()
-                    .IsOfType("Humidity", AdtDataType.AdtPrimative))
+                    .IsOfType("Humidity", DigitalTwinsDataType.AdtPrimative))
                 .Or()
                 .Parenthetical(q => q
-                    .IsOfType("Temperature", AdtDataType.AdtNumber)
+                    .IsOfType("Temperature", DigitalTwinsDataType.AdtNumber)
                     .Or()
-                    .IsOfType("Temperature", AdtDataType.AdtPrimative))
+                    .IsOfType("Temperature", DigitalTwinsDataType.AdtPrimative))
                 .Build()
                 .GetQueryText()
                 .Should()
