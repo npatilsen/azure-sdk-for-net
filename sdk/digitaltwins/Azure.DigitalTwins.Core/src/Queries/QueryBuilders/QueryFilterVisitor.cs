@@ -295,6 +295,12 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                 if (m.Method.Name == nameof(DigitalTwinsFunctions.IsOfModel))
                 {
                     Debug.Assert(m.Arguments.Count >= 1);
+
+                    if (m.Arguments[0] is ConstantExpression expr && expr.Value == null)
+                    {
+                        throw new InvalidOperationException($"{nameof(DigitalTwinsFunctions)}.{nameof(DigitalTwinsFunctions.IsOfModel)} requires a non-null Model ID.");
+                    }
+
                     Visit(m.Arguments[0]);
 
                     if (m.Arguments.Count == 2)
@@ -318,6 +324,11 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
 
                     foreach (var arg in m.Arguments)
                     {
+                        if (arg is ConstantExpression expr && expr.Value == null)
+                        {
+                            throw new InvalidOperationException($"Cannot pass null into a Digital Twins function.");
+                        }
+
                         if (!first)
                         {
                             _filter.Append(", ");

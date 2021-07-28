@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System;
 using Azure.DigitalTwins.Core.QueryBuilder;
 using FluentAssertions;
 using NUnit.Framework;
@@ -153,8 +154,6 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
                 .Be("SELECT T.Temperature AS Temp FROM DigitalTwins T");
         }
 
-        // FROM ALIASING IS NOT SUPPORTED
-        // TODO -- does this work? check query explorer
         [Test]
         public void Select_SelectAs_FromAlias()
         {
@@ -164,7 +163,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
                 .Where(r => r.Temperature >= 50)
                 .GetQueryText()
                 .Should()
-                .Be("SELECT T.Temperature, T.Humidity AS Hum FROM DigitalTwins T WHERE T.Temperature >= 50");
+                .Be("SELECT T.Temperature, T.Humidity AS Hum FROM DigitalTwins T WHERE Temperature >= 50");
         }
 
         [Test]
@@ -388,39 +387,45 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void FromCustom_Null()
         {
-            new DigitalTwinsQuery<ConferenceRoom>(null)
-                .GetQueryText()
-                .Should()
-                .Be("SELECT * FROM");
-        }
-
-        [Test]
-        public void FromCustom_EmptyString()
-        {
-            new DigitalTwinsQuery<ConferenceRoom>("")
-                .GetQueryText()
-                .Should()
-                .Be("SELECT * FROM");
+            Func<DigitalTwinsQuery<ConferenceRoom>> act = () => new DigitalTwinsQuery<ConferenceRoom>(null);
+            act.Should().Throw<ArgumentNullException>();
         }
 
         [Test]
         public void WhereLogic_StartsEndsWith_Null()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
-                .Where(r => DigitalTwinsFunctions.StartsWith(null, null))
-                .ToString()
-                .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE STARTSWITH(, '')");
+            Func<DigitalTwinsQuery<ConferenceRoom>> act = () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.StartsWith(null, null));
+            act.Should().Throw<InvalidOperationException>();
         }
 
         [Test]
         public void WhereLogic_IsOfModel_Null()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
-                .Where(r => DigitalTwinsFunctions.IsOfModel(null))
-                .ToString()
-                .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE IS_OF_MODEL('dtmi: example:room;1', exact)");
+            Func<DigitalTwinsQuery<ConferenceRoom>> act1 = () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsOfModel(null));
+            Func<DigitalTwinsQuery<ConferenceRoom>> act2 = () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsOfModel(null, true));
+
+            act1.Should().Throw<InvalidOperationException>();
+            act2.Should().Throw<InvalidOperationException>();
+        }
+
+        [Test]
+        public void WhereLogic_IsOfType_Null()
+        {
+            Func<DigitalTwinsQuery<ConferenceRoom>>[] funcs = new Func<DigitalTwinsQuery<ConferenceRoom>>[]
+            {
+                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsString(null)),
+                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsDefined(null)),
+                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsObject(null)),
+                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsBool(null)),
+                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsPrimitive(null)),
+                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsNull(null)),
+                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsNumber(null)),
+            };
+
+            foreach (var func in funcs)
+            {
+                func.Should().Throw<InvalidOperationException>();
+            }
         }
 
         [Test]
@@ -428,11 +433,27 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         {
             string[] cities = null;
             string property = null;
-            new DigitalTwinsQuery<ConferenceRoom>()
-                .Where($"{property} NIN {cities}")
-                .GetQueryText()
-                .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE null NIN null");
+            Func<DigitalTwinsQuery<ConferenceRoom>> act = () => new DigitalTwinsQuery<ConferenceRoom>().Where($"{property} NIN {cities}");
+            act.Should().Throw<InvalidOperationException>();
+        }
+
+        [Test]
+        public void WhereLogic_Comparison_Null()
+        {
+            Func<DigitalTwinsQuery<ConferenceRoom>> act = () => new DigitalTwinsQuery<ConferenceRoom>().Where($"Temperature >= {null}");
+            act.Should().Throw<InvalidOperationException>();
+        }
+
+        [Test]
+        public void Select_Null()
+        {
+            Func<DigitalTwinsQuery<ConferenceRoom>> act1 = () => new DigitalTwinsQuery<ConferenceRoom>().SelectCustom(null);
+            Func<DigitalTwinsQuery<ConferenceRoom>> act2 = () => new DigitalTwinsQuery<ConferenceRoom>().SelectAs(null, null);
+            Func<DigitalTwinsQuery<ConferenceRoom>> act3 = () => new DigitalTwinsQuery<ConferenceRoom>().Select(r => null);
+
+            act1.Should().Throw<InvalidOperationException>();
+            act2.Should().Throw<InvalidOperationException>();
+            act3.Should().Throw<InvalidOperationException>();
         }
     }
 }

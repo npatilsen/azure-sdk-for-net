@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Globalization;
 using System.Text;
+using Azure.Core;
 
 namespace Azure.DigitalTwins.Core.QueryBuilder
 {
@@ -24,7 +25,12 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// Create a Digital Twins query and set the queried collection to a custom string.
         /// </summary>
         /// <param name="customColection">Collection to query from.</param>
-        public DigitalTwinsQuery(string customColection) => _collection = customColection;
+        public DigitalTwinsQuery(string customColection)
+        {
+            Argument.AssertNotNull(customColection, nameof(customColection));
+
+            _collection = customColection;
+        }
 
         /// <summary>
         /// Create a Digital Twins query and set the queried collection to DigitalTwins or Relationships.
@@ -60,6 +66,14 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <returns>Query that contains a select clause.</returns>
         public DigitalTwinsQuery<T> Select(params Expression<Func<T, object>>[] selectors)
         {
+            foreach (var propertyName in selectors.Select(GetPropertyName))
+            {
+                if (propertyName == "null" || string.IsNullOrEmpty(propertyName))
+                {
+                    throw new InvalidOperationException("Cannot select null.");
+                }
+            }
+
             _propertyNames ??= new List<string>();
             _propertyNames.AddRange(selectors.Select(GetPropertyName));
 
@@ -73,6 +87,11 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <returns>Query that contains a select clause.</returns>
         public DigitalTwinsQuery<T> SelectCustom(string customClause)
         {
+            if (string.IsNullOrEmpty(customClause))
+            {
+                throw new InvalidOperationException("Cannot select null.");
+            }
+
             _customSelect = customClause;
             return this;
         }
@@ -85,6 +104,11 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <returns>Query that contains an aliased select clause.</returns>
         public DigitalTwinsQuery<T> SelectAs(string propertyName, string alias)
         {
+            if (string.IsNullOrEmpty(propertyName) || string.IsNullOrEmpty(alias))
+            {
+                throw new InvalidOperationException("Cannot select null or alias a selectable property to null.");
+            }
+
             _propertyNames ??= new List<string>();
 
             // insert AS between propertyName and alias
@@ -163,6 +187,11 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             for (int i = 0; i < args.Length; i++)
             {
                 args[i] = DigitalTwinsFunctions.Convert(filter.GetArgument(i), formatProvider);
+
+                if (args[i] == "null")
+                {
+                    throw new InvalidOperationException("Cannot pass null into logical statement.");
+                }
             }
 
             string text = string.Format(formatProvider, filter.Format, args);
