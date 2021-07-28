@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
 {
-    public class AdtQueryBuilderTests
+    public class DigitalTwinsQueryBuilderTests
     {
         [Test]
         public void Select_AllSimple()
@@ -323,7 +323,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void WhereLogic_StartEndsWith()
+        public void Where_StartEndsWith()
         {
             new DigitalTwinsQuery<ConferenceRoom>()
                 .Where(r => DigitalTwinsFunctions.StartsWith(r.Room, "3"))
@@ -374,14 +374,14 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void WhereLogic_StartsEndsWith_Null()
+        public void Where_StartsEndsWith_Null()
         {
             Func<DigitalTwinsQuery<ConferenceRoom>> act = () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.StartsWith(null, null));
             act.Should().Throw<InvalidOperationException>();
         }
 
         [Test]
-        public void WhereLogic_IsOfModel_Null()
+        public void Where_IsOfModel_Null()
         {
             Func<DigitalTwinsQuery<ConferenceRoom>> act1 = () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsOfModel(null));
             Func<DigitalTwinsQuery<ConferenceRoom>> act2 = () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsOfModel(null, true));
@@ -391,7 +391,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void WhereLogic_IsOfType_Null()
+        public void Where_IsOfType_Null()
         {
             Func<DigitalTwinsQuery<ConferenceRoom>>[] funcs = new Func<DigitalTwinsQuery<ConferenceRoom>>[]
             {
@@ -411,7 +411,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void WhereLogic_ContainsNotContains_Null()
+        public void Where_ContainsNotContains_Null()
         {
             string[] cities = null;
             string property = null;
@@ -420,7 +420,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         }
 
         [Test]
-        public void WhereLogic_Comparison_Null()
+        public void Where_Comparison_Null()
         {
             Func<DigitalTwinsQuery<ConferenceRoom>> act = () => new DigitalTwinsQuery<ConferenceRoom>().Where($"Temperature >= {null}");
             act.Should().Throw<InvalidOperationException>();
