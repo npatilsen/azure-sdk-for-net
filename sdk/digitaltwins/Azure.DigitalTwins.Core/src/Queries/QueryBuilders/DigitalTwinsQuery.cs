@@ -277,7 +277,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         public string GetQueryText()
         {
             QueryAssembler query = new QueryAssembler();
-            SelectAsQuery selectClause = _count
+            SelectClauseAssembler selectClause = _count
                 ? query.SelectCount()
                 : _top != null && _propertyNames != null
                     ? query.SelectTop(_top.Value, _propertyNames.ToArray())
@@ -289,7 +289,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                                 ? query.Select(_propertyNames.ToArray())
                                 : query.SelectAll();
 
-            WhereStatement whereClause = selectClause.FromCustom(_collection);
+            WhereClauseAssembler whereClause = selectClause.FromCustom(_collection);
 
             if (_clauses?.Count > 0)
             {

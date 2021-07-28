@@ -6,11 +6,11 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     /// <summary>
     /// Logical operators (AND/OR) and the ADT query language.
     /// </summary>
-    internal class LogicalOperator : QueryBase
+    internal class QueryAssemblerLogicalOperator
     {
-        private WhereLogic _whereLogic;
+        private WhereClauseAssemblerLogic _whereLogic;
 
-        internal LogicalOperator(WhereLogic whereLogic)
+        internal QueryAssemblerLogicalOperator(WhereClauseAssemblerLogic whereLogic)
         {
             _whereLogic = whereLogic;
         }
@@ -19,7 +19,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// Adds the AND logical operator to a query.
         /// </summary>
         /// <returns> A query that already contains SELECT and FROM. </returns>
-        public WhereLogic And()
+        public WhereClauseAssemblerLogic And()
         {
             _whereLogic.AppendLogicalOperator($" {QueryConstants.And} ");
             return _whereLogic;
@@ -29,20 +29,13 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// Adds the OR logical operator to a query.
         /// </summary>
         /// <returns> A query that already contains SELECT and FROM. </returns>
-        public WhereLogic Or()
+        public WhereClauseAssemblerLogic Or()
         {
             _whereLogic.AppendLogicalOperator($" {QueryConstants.Or} ");
             return _whereLogic;
         }
 
-        /// <inheritdoc/>
-        public override QueryAssembler Build()
-        {
-            return _whereLogic.BuildLogic();
-        }
-
-        /// <inheritdoc/>
-        public override string GetQueryText()
+        public string GetQueryText()
         {
             return _whereLogic.GetLogicText();
         }

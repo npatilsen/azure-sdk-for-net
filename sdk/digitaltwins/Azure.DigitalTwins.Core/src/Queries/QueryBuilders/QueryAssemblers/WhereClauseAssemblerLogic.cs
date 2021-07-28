@@ -9,16 +9,16 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     /// <summary>
     /// Query that already contains a SELECT, FROM and a WHERE statement.
     /// </summary>
-    internal sealed class WhereLogic
+    internal sealed class WhereClauseAssemblerLogic
     {
         private readonly QueryAssembler _parent;
-        private readonly LogicalOperator _logicalOperator;
+        private readonly QueryAssemblerLogicalOperator _logicalOperator;
         private readonly StringBuilder _conditions;
 
-        internal WhereLogic(QueryAssembler parent)
+        internal WhereClauseAssemblerLogic(QueryAssembler parent)
         {
             _parent = parent;
-            _logicalOperator = new LogicalOperator(this);
+            _logicalOperator = new QueryAssemblerLogicalOperator(this);
             _conditions = new StringBuilder();
         }
 
@@ -32,7 +32,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="condition">The verbatim condition (SQL-like syntax) in string format.</param>
         /// <returns>Logical operator to combine different WHERE functions or conditions.</returns>
-        public LogicalOperator CustomClause(string condition)
+        public QueryAssemblerLogicalOperator CustomClause(string condition)
         {
             _conditions.Append(condition);
             return _logicalOperator;

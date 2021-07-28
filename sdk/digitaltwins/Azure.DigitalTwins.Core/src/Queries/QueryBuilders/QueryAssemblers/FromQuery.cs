@@ -10,11 +10,11 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     /// </summary>
     internal sealed class FromQuery : QueryBase
     {
-        private readonly WhereStatement _upsteamWhereStatement;
+        private readonly WhereClauseAssembler _upsteamWhereStatement;
         private readonly QueryAssembler _parent;
         private FromClause _clause;
 
-        internal FromQuery(QueryAssembler parent, WhereStatement upsteamWhereStatement)
+        internal FromQuery(QueryAssembler parent, WhereClauseAssembler upsteamWhereStatement)
         {
             _parent = parent;
             _upsteamWhereStatement = upsteamWhereStatement;
@@ -26,7 +26,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="collection">The name of the collection.</param>
         /// <returns> ADT query with select and from clauses. </returns>
-        public WhereStatement FromCustom(string collection)
+        public WhereClauseAssembler FromCustom(string collection)
         {
             _clause = new FromClause(collection);
             return _upsteamWhereStatement;
