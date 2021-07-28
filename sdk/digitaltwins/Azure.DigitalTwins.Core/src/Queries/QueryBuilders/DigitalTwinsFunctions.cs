@@ -56,7 +56,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         public static bool IsObject(object value) => throw new NotImplementedException();
 
         /// <summary>
-        /// Adds the <see href="https://docs.microsoft.com/azure/digital-twins/reference-query-functions#is_null">_S_NULL</see> function to the condition statement of the query.
+        /// Adds the <see href="https://docs.microsoft.com/azure/digital-twins/reference-query-functions#is_null">IS_NULL</see> function to the condition statement of the query.
         /// </summary>
         /// <param name="value">The property that the query is looking for as null.</param>
         /// <returns>True if the specified property is null within the scope of the query, false if otherwise.</returns>

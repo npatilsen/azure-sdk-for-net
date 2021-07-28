@@ -10,13 +10,13 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     /// <summary>
     /// Used to select properties with the aliasing mechanism that allows renaming properties when the service responds.
     /// </summary>
-    internal sealed class SelectClauseAssembler : QueryBase
+    internal sealed class SelectClauseAssembler
     {
-        private FromQuery _fromQuery;
+        private FromClauseAssembler _fromQuery;
         private QueryAssembler _parent;
         private List<string> _clauses;
 
-        internal SelectClauseAssembler(QueryAssembler parent, FromQuery fromQuery)
+        internal SelectClauseAssembler(QueryAssembler parent, FromClauseAssembler fromQuery)
         {
             _fromQuery = fromQuery;
             _parent = parent;
@@ -46,15 +46,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             return _fromQuery.FromCustom(collection);
         }
 
-        /// <inheritdoc/>
-        public override QueryAssembler Build()
-        {
-            // Build can only be called on queries that have (at minimum) SELECT and FROM clauses
-            throw new InvalidOperationException("Invalid query: Missing a FROM clause.");
-        }
-
-        /// <inheritdoc/>
-        public override string GetQueryText()
+        public string GetQueryText()
         {
             if (_clauses.Count == 0)
             {

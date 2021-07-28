@@ -8,7 +8,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     /// <summary>
     /// Azure DigitalTwins Query builder that facilitates writing queries against ADT instances.
     /// </summary>
-    public class AdtQueryBuilder
+    public class DigitalTwinsQuery
     {
     }
 }

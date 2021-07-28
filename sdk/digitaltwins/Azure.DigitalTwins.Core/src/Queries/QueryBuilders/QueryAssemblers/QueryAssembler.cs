@@ -12,7 +12,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     internal class QueryAssembler
     {
         private SelectClause _clause;
-        private readonly FromQuery _fromQuery;
+        private readonly FromClauseAssembler _fromQuery;
         private readonly WhereClauseAssembler _whereStatement;
         private readonly WhereClauseAssemblerLogic _whereLogic;
         private readonly SelectClauseAssembler _selectAs;
@@ -24,7 +24,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         {
             _whereLogic = new WhereClauseAssemblerLogic(this);
             _whereStatement = new WhereClauseAssembler(this, _whereLogic);
-            _fromQuery = new FromQuery(this, _whereStatement);
+            _fromQuery = new FromClauseAssembler(this, _whereStatement);
             _selectAs = new SelectClauseAssembler(this, _fromQuery);
         }
 

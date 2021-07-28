@@ -8,13 +8,13 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     /// <summary>
     /// Query object that already contains a select clause.
     /// </summary>
-    internal sealed class FromQuery : QueryBase
+    internal sealed class FromClauseAssembler
     {
         private readonly WhereClauseAssembler _upsteamWhereStatement;
         private readonly QueryAssembler _parent;
         private FromClause _clause;
 
-        internal FromQuery(QueryAssembler parent, WhereClauseAssembler upsteamWhereStatement)
+        internal FromClauseAssembler(QueryAssembler parent, WhereClauseAssembler upsteamWhereStatement)
         {
             _parent = parent;
             _upsteamWhereStatement = upsteamWhereStatement;
@@ -32,14 +32,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             return _upsteamWhereStatement;
         }
 
-        /// <inheritdoc/>
-        public override QueryAssembler Build()
-        {
-            return _parent;
-        }
-
-        /// <inheritdoc/>
-        public override string GetQueryText()
+        public string GetQueryText()
         {
             var fromComponents = new StringBuilder();
             fromComponents.Append(_clause.Collection);

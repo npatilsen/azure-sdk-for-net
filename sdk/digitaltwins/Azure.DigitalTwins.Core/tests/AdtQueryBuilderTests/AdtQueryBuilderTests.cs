@@ -341,24 +341,6 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void MultipleNested()
         {
-            new AdtQueryBuilder()
-                .SelectAll()
-                .From(DigitalTwinsCollection.DigitalTwins)
-                .Where()
-                .Parenthetical(q => q
-                    .IsOfType("Humidity", DigitalTwinsDataType.AdtNumber)
-                    .Or()
-                    .IsOfType("Humidity", DigitalTwinsDataType.AdtPrimative))
-                .Or()
-                .Parenthetical(q => q
-                    .IsOfType("Temperature", DigitalTwinsDataType.AdtNumber)
-                    .Or()
-                    .IsOfType("Temperature", DigitalTwinsDataType.AdtPrimative))
-                .Build()
-                .GetQueryText()
-                .Should()
-                .Be("SELECT * FROM DigitalTwins WHERE (IS_NUMBER(Humidity) OR IS_PRIMATIVE(Humidity)) OR (IS_NUMBER(Temperature) OR IS_PRIMATIVE(Temperature))");
-
             new DigitalTwinsQuery<ConferenceRoom>()
                 .Where(r => (DigitalTwinsFunctions.IsNumber(r.Humidity) || DigitalTwinsFunctions.IsPrimitive(r.Humidity))
                     || (DigitalTwinsFunctions.IsNumber(r.Temperature) || DigitalTwinsFunctions.IsPrimitive(r.Temperature)))
