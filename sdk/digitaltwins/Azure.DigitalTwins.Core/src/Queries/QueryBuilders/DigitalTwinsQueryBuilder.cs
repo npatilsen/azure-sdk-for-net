@@ -14,18 +14,18 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     /// <summary>
     /// Azure DigitalTwins Query builder that facilitates writing queries against ADT instances.
     /// </summary>
-    public class DigitalTwinsQuery<T>
+    public class DigitalTwinsQueryBuilder<T>
     {
         /// <summary>
         /// Create a Digital Twins query and set the queried collection to DigitalTwins by default.
         /// </summary>
-        public DigitalTwinsQuery() : this(DigitalTwinsCollection.DigitalTwins) { }
+        public DigitalTwinsQueryBuilder() : this(DigitalTwinsCollection.DigitalTwins) { }
 
         /// <summary>
         /// Create a Digital Twins query and set the queried collection to a custom string.
         /// </summary>
         /// <param name="customColection">Collection to query from.</param>
-        public DigitalTwinsQuery(string customColection)
+        public DigitalTwinsQueryBuilder(string customColection)
         {
             Argument.AssertNotNull(customColection, nameof(customColection));
 
@@ -36,7 +36,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// Create a Digital Twins query and set the queried collection to DigitalTwins or Relationships.
         /// </summary>
         /// <param name="collection">Collection to query from.</param>
-        public DigitalTwinsQuery(DigitalTwinsCollection collection)
+        public DigitalTwinsQueryBuilder(DigitalTwinsCollection collection)
         {
             _collection = collection switch
             {
@@ -51,7 +51,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="propertyNames">The arguments that define what we select.</param>
         /// <returns>Query that contains a select clause.</returns>
-        public DigitalTwinsQuery<T> Select(params string[] propertyNames)
+        public DigitalTwinsQueryBuilder<T> Select(params string[] propertyNames)
         {
             _propertyNames ??= new List<string>();
             _propertyNames.AddRange(propertyNames);
@@ -64,7 +64,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="selectors">The arguments that define what we select.</param>
         /// <returns>Query that contains a select clause.</returns>
-        public DigitalTwinsQuery<T> Select(params Expression<Func<T, object>>[] selectors)
+        public DigitalTwinsQueryBuilder<T> Select(params Expression<Func<T, object>>[] selectors)
         {
             foreach (var propertyName in selectors.Select(GetPropertyName))
             {
@@ -82,7 +82,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="customClause">Query in string format.</param>
         /// <returns>Query that contains a select clause.</returns>
-        public DigitalTwinsQuery<T> SelectCustom(string customClause)
+        public DigitalTwinsQueryBuilder<T> SelectCustom(string customClause)
         {
             Argument.AssertNotNullOrWhiteSpace(customClause, nameof(customClause));
 
@@ -96,7 +96,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="propertyName">The proper name for the selectable property in the Digital Twins Query Language.</param>
         /// <param name="alias">The alias to be assigned to the return contents in the query response.</param>
         /// <returns>Query that contains an aliased select clause.</returns>
-        public DigitalTwinsQuery<T> SelectAs(string propertyName, string alias)
+        public DigitalTwinsQueryBuilder<T> SelectAs(string propertyName, string alias)
         {
             Argument.AssertNotNullOrWhiteSpace(propertyName, nameof(propertyName));
             Argument.AssertNotNullOrWhiteSpace(alias, nameof(alias));
@@ -115,7 +115,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="count">The argument for TOP(), i.e. the number of results to return.</param>
         /// <returns>Query that contains a select clause.</returns>
-        public DigitalTwinsQuery<T> Take(int count)
+        public DigitalTwinsQueryBuilder<T> Take(int count)
         {
             _top = count;
             return this;
@@ -125,13 +125,13 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// Used when applying the <see href="https://docs.microsoft.com/azure/digital-twins/reference-query-clause-select#select-count">COUNT()</see> aggregate from the Digital Twins query language.
         /// </summary>
         /// <returns>Query that contains a select clause.</returns>
-        public DigitalTwinsQuery<T> Count()
+        public DigitalTwinsQueryBuilder<T> Count()
         {
             _count = true;
             return this;
         }
 
-        private DigitalTwinsQuery<T> Where(string filter)
+        private DigitalTwinsQueryBuilder<T> Where(string filter)
         {
             _clauses ??= new List<string>();
             _clauses.Add(filter);
@@ -144,7 +144,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="filter">The verbatim condition in string format.</param>
         /// <returns>Query that contains a WHERE clause and conditional arguments.</returns>
-        public DigitalTwinsQuery<T> WhereCustom(string filter)
+        public DigitalTwinsQueryBuilder<T> WhereCustom(string filter)
         {
             _clauses ??= new List<string>();
             _clauses.Add(filter);
@@ -157,7 +157,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="filter">Conditional argument relevant to a Digital Twins query (e.g. comparisons, Digital Twins Functions, etc.)</param>
         /// <returns>Query that contains a WHERE clause and conditional arguments.</returns>
-        public DigitalTwinsQuery<T> Where(FormattableString filter) => Where(filter, null);
+        public DigitalTwinsQueryBuilder<T> Where(FormattableString filter) => Where(filter, null);
 
         /// <summary>
         /// Adds a WHERE clause to a query along with conditions defined with LINQ expressions.
@@ -165,7 +165,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <param name="filter">Conditional argument relevant to a Digital Twins query (e.g. comparisons, Digital Twins Functions, etc.)</param>
         /// <param name="formatProvider">Culture-specific formatting information for Digital Twins queries.</param>
         /// <returns>Query that contains a WHERE clause and conditional arguments.</returns>
-        public DigitalTwinsQuery<T> Where(FormattableString filter, IFormatProvider formatProvider)
+        public DigitalTwinsQueryBuilder<T> Where(FormattableString filter, IFormatProvider formatProvider)
         {
             formatProvider ??= CultureInfo.InvariantCulture;
 
@@ -195,7 +195,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// </summary>
         /// <param name="filter">Conditional argument relevant to a Digital Twins query (e.g. comparisons, Digital Twins Functions, etc.)</param>
         /// <returns>Query that contains a WHERE clause and conditional arguments.</returns>
-        public DigitalTwinsQuery<T> Where(Expression<Func<T, bool>> filter)
+        public DigitalTwinsQueryBuilder<T> Where(Expression<Func<T, bool>> filter)
         {
             string query = string.Empty;
             Expression e = Evaluator.PartialEval(filter, CanEvaluate);

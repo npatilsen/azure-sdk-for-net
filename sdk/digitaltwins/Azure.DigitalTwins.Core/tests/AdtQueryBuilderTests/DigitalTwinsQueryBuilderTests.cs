@@ -13,19 +13,19 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_AllSimple()
         {
-            new DigitalTwinsQuery<ConferenceRoom>().ToString().Should().Be("SELECT * FROM DigitalTwins");
+            new DigitalTwinsQueryBuilder<ConferenceRoom>().ToString().Should().Be("SELECT * FROM DigitalTwins");
         }
 
         [Test]
         public void Select_SingleProperty()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Select("Room")
                 .ToString()
                 .Should()
                 .Be("SELECT Room FROM DigitalTwins");
 
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Select(r => r.Room)
                 .ToString()
                 .Should()
@@ -35,25 +35,25 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_SelectAllRelationships()
         {
-            new DigitalTwinsQuery<ConferenceRoom>(DigitalTwinsCollection.Relationships).GetQueryText().Should().Be("SELECT * FROM Relationships");
+            new DigitalTwinsQueryBuilder<ConferenceRoom>(DigitalTwinsCollection.Relationships).GetQueryText().Should().Be("SELECT * FROM Relationships");
         }
 
         [Test]
         public void Select_MultipleProperties()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Select("Room", "Factory", "Temperature", "Humidity")
                 .ToString()
                 .Should()
                 .Be("SELECT Room, Factory, Temperature, Humidity FROM DigitalTwins");
 
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Select(r => r.Room, r => r.Factory, r => r.Temperature, r => r.Humidity)
                 .ToString()
                 .Should()
                 .Be("SELECT Room, Factory, Temperature, Humidity FROM DigitalTwins");
 
-            var digitalTwinsQuery = new DigitalTwinsQuery<ConferenceRoom>();
+            var digitalTwinsQuery = new DigitalTwinsQueryBuilder<ConferenceRoom>();
             digitalTwinsQuery = digitalTwinsQuery.Select("Room", "Factory", "Temperature", "Humidity");
             digitalTwinsQuery
                 .ToString()
@@ -64,7 +64,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_SelectAsWithoutLinq()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Select("Humidity")
                 .SelectAs("Room", "R")
                 .SelectAs("Temperature", "Temp")
@@ -77,7 +77,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_Aggregates_Top_All()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Take(5)
                 .ToString()
                 .Should()
@@ -87,14 +87,14 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_Aggregates_Top_Properties()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Select("Temperature", "Humidity")
                 .Take(3)
                 .ToString()
                 .Should()
                 .Be("SELECT TOP(3) Temperature, Humidity FROM DigitalTwins");
 
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Select(r => r.Temperature, r => r.Humidity)
                 .Take(3)
                 .ToString()
@@ -104,7 +104,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
 
         public void Select_Aggregates_Count()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Count()
                 .ToString()
                 .Should()
@@ -114,7 +114,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_Override()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .SelectCustom("TOP(3) Room, Temperature")
                 .ToString()
                 .Should()
@@ -124,7 +124,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_SelectAs()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .SelectAs("Temperature", "Temp")
                 .SelectAs("Humidity", "Hum")
                 .GetQueryText()
@@ -135,7 +135,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_SelectAsChainedWithSelect()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Select("Occupants", "T")
                 .SelectAs("Temperature", "Temp")
                 .SelectAs("Humidity", "Hum")
@@ -147,7 +147,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_SelectAs_CustomFrom()
         {
-            new DigitalTwinsQuery<ConferenceRoom>("DigitalTwins T")
+            new DigitalTwinsQueryBuilder<ConferenceRoom>("DigitalTwins T")
                 .SelectAs("T.Temperature", "Temp")
                 .GetQueryText()
                 .Should()
@@ -157,7 +157,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_SelectAs_FromAlias()
         {
-            new DigitalTwinsQuery<ConferenceRoom>("DigitalTwins T")
+            new DigitalTwinsQueryBuilder<ConferenceRoom>("DigitalTwins T")
                 .Select("T.Temperature")
                 .SelectAs("T.Humidity", "Hum")
                 .Where(r => r.Temperature >= 50)
@@ -169,13 +169,13 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Where_Comparison()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where($"Temperature >= {50}")
                 .GetQueryText()
                 .Should()
                 .Be("SELECT * FROM DigitalTwins WHERE Temperature >= 50");
 
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where(r => r.Temperature >= 50)
                 .GetQueryText()
                 .Should()
@@ -186,14 +186,14 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         public void Where_Contains()
         {
             string city = "Paris";
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where($"Location NIN [{city}, 'Tokyo', 'Madrid', 'Prague']")
                 .GetQueryText()
                 .Should()
                 .Be("SELECT * FROM DigitalTwins WHERE Location NIN ['Paris', 'Tokyo', 'Madrid', 'Prague']");
 
             string[] cities = new string[] { "Paris", "Tokyo", "Madrid", "Prague" };
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where($"Location NIN {cities}")
                 .GetQueryText()
                 .Should()
@@ -203,7 +203,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Where_Override()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .WhereCustom($"IS_OF_MODEL('dtmi:example:room;1', exact)")
                 .ToString()
                 .Should()
@@ -213,13 +213,13 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Where_IsOfModel()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where(_ => DigitalTwinsFunctions.IsOfModel("dtmi:example:room;1", true))
                 .ToString()
                 .Should()
                 .Be("SELECT * FROM DigitalTwins WHERE IS_OF_MODEL('dtmi:example:room;1', exact)");
 
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where(_ => DigitalTwinsFunctions.IsOfModel("dtmi:example:room;1"))
                 .ToString()
                 .Should()
@@ -229,7 +229,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Where_IsBool()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where(r => DigitalTwinsFunctions.IsBool(r.IsOccupied))
                 .ToString()
                 .Should()
@@ -239,7 +239,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Where_IsDefined()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where(r => DigitalTwinsFunctions.IsDefined(r.Temperature))
                 .ToString()
                 .Should()
@@ -248,7 +248,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
 
         [Test] public void Where_IsPrimitive()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                .Where(r => DigitalTwinsFunctions.IsPrimitive(r.Temperature))
                .ToString()
                .Should()
@@ -258,7 +258,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Where_IsNumber()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                .Where(r => DigitalTwinsFunctions.IsNumber(r.Temperature))
                 .ToString()
                 .Should()
@@ -268,7 +268,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Where_IsString()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where(r => DigitalTwinsFunctions.IsString(r.Factory))
                 .ToString()
                 .Should()
@@ -278,7 +278,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Where_IsObject()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where(r => DigitalTwinsFunctions.IsObject(r.Factory))
                 .ToString()
                 .Should()
@@ -288,7 +288,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Where_IsNull()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where(r => DigitalTwinsFunctions.IsNull(r.Temperature))
                 .ToString()
                 .Should()
@@ -299,14 +299,14 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         public void Where_MultipleWhere()
         {
             int count = 10;
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Select("Temperature")
                 .Where($"IS_DEFINED(Humidity) AND Occupants < {count}")
                 .GetQueryText()
                 .Should()
                 .Be("SELECT Temperature FROM DigitalTwins WHERE IS_DEFINED(Humidity) AND Occupants < 10");
 
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Select("Temperature")
                 .Where($"IS_DEFINED(Humidity)")
                 .Where($"Occupants < {count}")
@@ -314,7 +314,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
                 .Should()
                 .Be("SELECT Temperature FROM DigitalTwins WHERE IS_DEFINED(Humidity) AND Occupants < 10");
 
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Select(r => r.Temperature)
                 .Where(r => DigitalTwinsFunctions.IsDefined(r.Humidity) && r.Occupants < 10)
                 .GetQueryText()
@@ -325,13 +325,13 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Where_StartEndsWith()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where(r => DigitalTwinsFunctions.StartsWith(r.Room, "3"))
                 .GetQueryText()
                 .Should()
                 .Be("SELECT * FROM DigitalTwins WHERE STARTSWITH(Room, '3')");
 
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where(r => r.Room.EndsWith("3"))
                 .GetQueryText()
                 .Should()
@@ -341,14 +341,14 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void MultipleNested()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Where(r => (DigitalTwinsFunctions.IsNumber(r.Humidity) || DigitalTwinsFunctions.IsPrimitive(r.Humidity))
                     || (DigitalTwinsFunctions.IsNumber(r.Temperature) || DigitalTwinsFunctions.IsPrimitive(r.Temperature)))
                 .GetQueryText()
                 .Should()
                 .Be("SELECT * FROM DigitalTwins WHERE (IS_NUMBER(Humidity) OR IS_PRIMITIVE(Humidity)) OR (IS_NUMBER(Temperature) OR IS_PRIMITIVE(Temperature))");
 
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                .Where(r => (DigitalTwinsFunctions.IsNumber(r.Humidity) || DigitalTwinsFunctions.IsPrimitive(r.Humidity)) &&
                    (DigitalTwinsFunctions.IsNumber(r.Temperature) || DigitalTwinsFunctions.IsPrimitive(r.Temperature)))
                .GetQueryText()
@@ -359,7 +359,7 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_EmptyString()
         {
-            new DigitalTwinsQuery<ConferenceRoom>()
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
                 .Select("")
                 .GetQueryText()
                 .Should()
@@ -369,22 +369,22 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void FromCustom_Null()
         {
-            Func<DigitalTwinsQuery<ConferenceRoom>> act = () => new DigitalTwinsQuery<ConferenceRoom>(null);
+            Func<DigitalTwinsQueryBuilder<ConferenceRoom>> act = () => new DigitalTwinsQueryBuilder<ConferenceRoom>(null);
             act.Should().Throw<ArgumentNullException>();
         }
 
         [Test]
         public void Where_StartsEndsWith_Null()
         {
-            Func<DigitalTwinsQuery<ConferenceRoom>> act = () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.StartsWith(null, null));
+            Func<DigitalTwinsQueryBuilder<ConferenceRoom>> act = () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Where(r => DigitalTwinsFunctions.StartsWith(null, null));
             act.Should().Throw<InvalidOperationException>();
         }
 
         [Test]
         public void Where_IsOfModel_Null()
         {
-            Func<DigitalTwinsQuery<ConferenceRoom>> act1 = () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsOfModel(null));
-            Func<DigitalTwinsQuery<ConferenceRoom>> act2 = () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsOfModel(null, true));
+            Func<DigitalTwinsQueryBuilder<ConferenceRoom>> act1 = () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsOfModel(null));
+            Func<DigitalTwinsQueryBuilder<ConferenceRoom>> act2 = () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsOfModel(null, true));
 
             act1.Should().Throw<InvalidOperationException>();
             act2.Should().Throw<InvalidOperationException>();
@@ -393,15 +393,15 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Where_IsOfType_Null()
         {
-            Func<DigitalTwinsQuery<ConferenceRoom>>[] funcs = new Func<DigitalTwinsQuery<ConferenceRoom>>[]
+            Func<DigitalTwinsQueryBuilder<ConferenceRoom>>[] funcs = new Func<DigitalTwinsQueryBuilder<ConferenceRoom>>[]
             {
-                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsString(null)),
-                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsDefined(null)),
-                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsObject(null)),
-                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsBool(null)),
-                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsPrimitive(null)),
-                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsNull(null)),
-                () => new DigitalTwinsQuery<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsNumber(null)),
+                () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsString(null)),
+                () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsDefined(null)),
+                () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsObject(null)),
+                () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsBool(null)),
+                () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsPrimitive(null)),
+                () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsNull(null)),
+                () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Where(r => DigitalTwinsFunctions.IsNumber(null)),
             };
 
             foreach (var func in funcs)
@@ -415,23 +415,23 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         {
             string[] cities = null;
             string property = null;
-            Func<DigitalTwinsQuery<ConferenceRoom>> act = () => new DigitalTwinsQuery<ConferenceRoom>().Where($"{property} NIN {cities}");
+            Func<DigitalTwinsQueryBuilder<ConferenceRoom>> act = () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Where($"{property} NIN {cities}");
             act.Should().Throw<InvalidOperationException>();
         }
 
         [Test]
         public void Where_Comparison_Null()
         {
-            Func<DigitalTwinsQuery<ConferenceRoom>> act = () => new DigitalTwinsQuery<ConferenceRoom>().Where($"Temperature >= {null}");
+            Func<DigitalTwinsQueryBuilder<ConferenceRoom>> act = () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Where($"Temperature >= {null}");
             act.Should().Throw<InvalidOperationException>();
         }
 
         [Test]
         public void Select_Null()
         {
-            Func<DigitalTwinsQuery<ConferenceRoom>> act1 = () => new DigitalTwinsQuery<ConferenceRoom>().SelectCustom(null);
-            Func<DigitalTwinsQuery<ConferenceRoom>> act2 = () => new DigitalTwinsQuery<ConferenceRoom>().SelectAs(null, null);
-            Func<DigitalTwinsQuery<ConferenceRoom>> act3 = () => new DigitalTwinsQuery<ConferenceRoom>().Select(r => null);
+            Func<DigitalTwinsQueryBuilder<ConferenceRoom>> act1 = () => new DigitalTwinsQueryBuilder<ConferenceRoom>().SelectCustom(null);
+            Func<DigitalTwinsQueryBuilder<ConferenceRoom>> act2 = () => new DigitalTwinsQueryBuilder<ConferenceRoom>().SelectAs(null, null);
+            Func<DigitalTwinsQueryBuilder<ConferenceRoom>> act3 = () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Select(r => null);
 
             act1.Should().Throw<InvalidOperationException>();
             act2.Should().Throw<InvalidOperationException>();

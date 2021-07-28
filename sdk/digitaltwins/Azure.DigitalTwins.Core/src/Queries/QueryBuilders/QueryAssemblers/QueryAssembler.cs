@@ -1,4 +1,4 @@
-﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
 using System;
@@ -98,10 +98,8 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <example>
         /// <code snippet="Snippet:DigitalTwinsQueryBuilderOverride" language="csharp">
         /// // SELECT TOP(3) Room, Temperature FROM DIGITALTWINS
-        /// new AdtQueryBuilder()
-        /// .SelectCustom(&quot;TOP(3) Room, Temperature&quot;)
-        /// .From(AdtCollection.DigitalTwins)
-        /// .Build();
+        /// new DigitalTwinsQueryBuilder&lt;ConferenceRoom&gt;()
+        /// .SelectCustom(&quot;TOP(3) Room, Temperature&quot;);
         /// </code>
         /// </example>
         /// <param name="customQuery">Query in string format.</param>
