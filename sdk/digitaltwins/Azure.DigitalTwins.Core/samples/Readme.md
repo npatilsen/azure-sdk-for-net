@@ -310,6 +310,17 @@ public class ConferenceRoom
 ```
 By passing in `ConferenceRoom` as a generic type into `DigitalTwinsQueryBuilder`, [LINQ expressions](https://docs.microsoft.com/dotnet/api/system.linq.expressions.expression?view=net-5.0) can be utilized to build queries efficiently and intelligently.
 
+In the event that there is no specific collection that can be passed into the query builder, a non-generic `DigitalTwinsQueryBuilder` can be used that implicitly uses `BasicDigitalTwin` as type `T`. In the snippet below, the adjacent expressions are equivalent. Note that relying on the non-generic version of `DigitalTwinsQueryBuilder` forgoes many of the LINQ driven benefits available to the generic version.
+
+```C# Snippet:DigitalTwinsQueryBuilderNonGeneric
+new DigitalTwinsQueryBuilder();
+new DigitalTwinsQueryBuilder<BasicDigitalTwin>();
+
+// SELECT * FROM DigitalTwins
+new DigitalTwinsQueryBuilder().GetQueryText();
+new DigitalTwinsQueryBuilder<BasicDigitalTwin>().GetQueryText();
+```
+
 Queryable collections (DigitalTwins, Relationships, or some custom collection) are specified in the `DigitalTwinsQueryBuilder` constructor. If no collection is specified, the query will select from `DigitalTwins` by default.
 
 ```C# Snippet:DigitalTwinsQueryBuilder
@@ -429,7 +440,7 @@ DigitalTwinsQueryBuilder<ConferenceRoom> selectAndSelectAs = new DigitalTwinsQue
     .From(DigitalTwinsCollection.DigitalTwins, "T");
 ```
 
-Turn a `DigitalTwinsQueryBuilder` to a string by calling `GetQueryText()`. Note that for the most up to date string representation of a query, `Build()` should be called often:
+Turn a `DigitalTwinsQueryBuilder` to a string by calling `GetQueryText()` or `ToString()` which redirects to the former. Note that for the most up to date string representation of a query, `Build()` should be called often:
 
 ```C# Snippet:DigitalTwinsQueryBuilderToString
 string basicQueryStringFormat = new DigitalTwinsQueryBuilder<ConferenceRoom>().GetQueryText();

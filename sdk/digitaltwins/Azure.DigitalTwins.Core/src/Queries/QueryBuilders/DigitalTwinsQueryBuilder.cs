@@ -8,12 +8,38 @@ using System.Linq.Expressions;
 using System.Globalization;
 using System.Text;
 using Azure.Core;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Azure.DigitalTwins.Core.QueryBuilder
 {
     /// <summary>
+    /// Azure DigitalTwins Query builder that facilitates writing queries against ADT instances. Redirects to generic version of this class using BasicDigitalTwin as type T.
+    /// </summary>
+    public class DigitalTwinsQueryBuilder : DigitalTwinsQueryBuilder<BasicDigitalTwin>
+    {
+        /// <summary>
+        /// Create a Digital Twins query and set the queried collection to DigitalTwins by default.
+        /// </summary>
+        public DigitalTwinsQueryBuilder() : base(DigitalTwinsCollection.DigitalTwins) { }
+
+        /// <summary>
+        /// Create a Digital Twins query and set the queried collection to a custom string.
+        /// </summary>
+        /// <param name="customColection">Collection to query from.</param>
+        public DigitalTwinsQueryBuilder(string customColection) : base(customColection) { }
+
+        /// <summary>
+        /// Create a Digital Twins query and set the queried collection to DigitalTwins or Relationships.
+        /// </summary>
+        /// <param name="collection">Collection to query from.</param>
+        /// <param name="alias">Optional collection alias.</param>
+        public DigitalTwinsQueryBuilder(DigitalTwinsCollection collection, string alias = null) : base(collection, alias) { }
+    }
+
+    /// <summary>
     /// Azure DigitalTwins Query builder that facilitates writing queries against ADT instances.
     /// </summary>
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:File may only contain a single type", Justification = "<Pending>")]
     public class DigitalTwinsQueryBuilder<T>
     {
         /// <summary>
@@ -24,12 +50,12 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// <summary>
         /// Create a Digital Twins query and set the queried collection to a custom string.
         /// </summary>
-        /// <param name="customColection">Collection to query from.</param>
-        public DigitalTwinsQueryBuilder(string customColection)
+        /// <param name="customCollection">Collection to query from.</param>
+        public DigitalTwinsQueryBuilder(string customCollection)
         {
-            Argument.AssertNotNull(customColection, nameof(customColection));
+            Argument.AssertNotNull(customCollection, nameof(customCollection));
 
-            _collection = customColection;
+            _collection = customCollection;
         }
 
         /// <summary>

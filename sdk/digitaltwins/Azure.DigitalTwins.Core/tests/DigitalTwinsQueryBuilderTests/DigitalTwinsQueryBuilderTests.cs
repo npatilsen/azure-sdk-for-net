@@ -11,6 +11,45 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
     public class DigitalTwinsQueryBuilderTests
     {
         [Test]
+        public void Select_NonGeneric()
+        {
+            new DigitalTwinsQueryBuilder().ToString().Should().Be("SELECT * FROM DigitalTwins");
+        }
+
+        [Test]
+        public void Select_SingeProperty_NonGeneric()
+        {
+            new DigitalTwinsQueryBuilder()
+                .Select("Room")
+                .ToString()
+                .Should()
+                .Be("SELECT Room FROM DigitalTwins");
+        }
+
+        [Test]
+        public void Where_NonGeneric()
+        {
+            new DigitalTwinsQueryBuilder()
+                .Where(_ => DigitalTwinsFunctions.IsOfModel("dtmi:example:room;1", true))
+                .ToString()
+                .Should()
+                .Be("SELECT * FROM DigitalTwins WHERE IS_OF_MODEL('dtmi:example:room;1', exact)");
+
+            new DigitalTwinsQueryBuilder()
+                .Where($"Temperature >= {50}")
+                .GetQueryText()
+                .Should()
+                .Be("SELECT * FROM DigitalTwins WHERE Temperature >= 50");
+
+            string[] cities = new string[] { "Paris", "Tokyo", "Madrid", "Prague" };
+            new DigitalTwinsQueryBuilder()
+                .Where($"Location NIN {cities}")
+                .GetQueryText()
+                .Should()
+                .Be("SELECT * FROM DigitalTwins WHERE Location NIN ['Paris', 'Tokyo', 'Madrid', 'Prague']");
+        }
+
+        [Test]
         public void Select_AllSimple()
         {
             new DigitalTwinsQueryBuilder<ConferenceRoom>().ToString().Should().Be("SELECT * FROM DigitalTwins");

@@ -15,6 +15,14 @@ namespace Azure.DigitalTwins.Core.Samples
         /// </summary>
         public static void Main()
         {
+            #region Snippet:DigitalTwinsQueryBuilderNonGeneric
+            new DigitalTwinsQueryBuilder();
+            new DigitalTwinsQueryBuilder<BasicDigitalTwin>();
+
+            // SELECT * FROM DigitalTwins
+            new DigitalTwinsQueryBuilder().GetQueryText();
+            new DigitalTwinsQueryBuilder<BasicDigitalTwin>().GetQueryText();
+            #endregion
             #region Snippet:DigitalTwinsQueryBuilder
 
             // SELECT * FROM DigitalTwins
