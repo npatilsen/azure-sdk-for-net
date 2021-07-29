@@ -469,10 +469,9 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
             Func<DigitalTwinsQueryBuilder<ConferenceRoom>> act2 = () => new DigitalTwinsQueryBuilder<ConferenceRoom>().SelectAs(null, null);
             Func<DigitalTwinsQueryBuilder<ConferenceRoom>> act3 = () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Select(r => null);
 
-            // TODO -- invalid operation?
             act1.Should().Throw<ArgumentNullException>();
             act2.Should().Throw<ArgumentNullException>();
-            act3.Should().Throw<ArgumentNullException>();
+            act3.Should().Throw<InvalidOperationException>();
         }
     }
 }
