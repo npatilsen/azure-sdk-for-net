@@ -65,7 +65,7 @@ namespace Azure.DigitalTwins.Core.Samples
 
             // SELECT * FROM DIGITALTWINS WHERE Temperature = 50 OR IS_OF_MODEL("dtmi..", exact)
             DigitalTwinsQueryBuilder<ConferenceRoom> logicalOps_SingleOr = new DigitalTwinsQueryBuilder<ConferenceRoom>()
-                .Where(r => r.Temperature == 50 || DigitalTwinsFunctions.IsOfModel("dtmi:example:room;1", true));
+                .Where(r => (r.Temperature == 50 || DigitalTwinsFunctions.IsOfModel("dtmi:example:room;1", true)) && r.IsOccupied == true);
 
             #region Snippet:DigitalTwinsQueryBuilder_ComplexConditions
             // SELECT * FROM DIGITALTWINS WHERE Temperature = 50 OR IS_OF_MODEL("dtmi..", exact) OR IS_NUMBER(Temperature)

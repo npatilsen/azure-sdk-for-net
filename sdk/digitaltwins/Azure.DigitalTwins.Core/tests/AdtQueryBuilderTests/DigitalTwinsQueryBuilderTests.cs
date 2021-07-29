@@ -157,13 +157,49 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
         [Test]
         public void Select_SelectAs_FromAlias()
         {
-            new DigitalTwinsQueryBuilder<ConferenceRoom>("DigitalTwins T")
+            new DigitalTwinsQueryBuilder<ConferenceRoom>(DigitalTwinsCollection.DigitalTwins, "T")
                 .Select("T.Temperature")
                 .SelectAs("T.Humidity", "Hum")
                 .Where(r => r.Temperature >= 50)
                 .GetQueryText()
                 .Should()
                 .Be("SELECT T.Temperature, T.Humidity AS Hum FROM DigitalTwins T WHERE Temperature >= 50");
+        }
+
+        [Test]
+        public void From_FromAlias()
+        {
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
+                .Select("T.Temperature")
+                .SelectAs("T.Humidity", "Hum")
+                .From(DigitalTwinsCollection.DigitalTwins, "T")
+                .Where(r => r.Temperature >= 50)
+                .GetQueryText()
+                .Should()
+                .Be("SELECT T.Temperature, T.Humidity AS Hum FROM DigitalTwins T WHERE Temperature >= 50");
+        }
+
+        [Test]
+        public void From_FromCustom()
+        {
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
+                .Select("T.Temperature")
+                .SelectAs("T.Humidity", "Hum")
+                .FromCustom("DigitalTwins T")
+                .Where(r => r.Temperature >= 50)
+                .GetQueryText()
+                .Should()
+                .Be("SELECT T.Temperature, T.Humidity AS Hum FROM DigitalTwins T WHERE Temperature >= 50");
+        }
+
+        [Test]
+        public void From_OverrideConstructor()
+        {
+            new DigitalTwinsQueryBuilder<ConferenceRoom>()
+                .From(DigitalTwinsCollection.Relationships)
+                .GetQueryText()
+                .Should()
+                .Be("SELECT * FROM Relationships");
         }
 
         [Test]
@@ -433,9 +469,10 @@ namespace Azure.DigitalTwins.Core.Tests.QueryBuilderTests
             Func<DigitalTwinsQueryBuilder<ConferenceRoom>> act2 = () => new DigitalTwinsQueryBuilder<ConferenceRoom>().SelectAs(null, null);
             Func<DigitalTwinsQueryBuilder<ConferenceRoom>> act3 = () => new DigitalTwinsQueryBuilder<ConferenceRoom>().Select(r => null);
 
-            act1.Should().Throw<InvalidOperationException>();
-            act2.Should().Throw<InvalidOperationException>();
-            act3.Should().Throw<InvalidOperationException>();
+            // TODO -- invalid operation?
+            act1.Should().Throw<ArgumentNullException>();
+            act2.Should().Throw<ArgumentNullException>();
+            act3.Should().Throw<ArgumentNullException>();
         }
     }
 }

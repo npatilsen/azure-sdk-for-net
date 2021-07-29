@@ -36,7 +36,8 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         /// Create a Digital Twins query and set the queried collection to DigitalTwins or Relationships.
         /// </summary>
         /// <param name="collection">Collection to query from.</param>
-        public DigitalTwinsQueryBuilder(DigitalTwinsCollection collection)
+        /// <param name="alias">Optional collection alias.</param>
+        public DigitalTwinsQueryBuilder(DigitalTwinsCollection collection, string alias = null)
         {
             _collection = collection switch
             {
@@ -44,6 +45,11 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                 DigitalTwinsCollection.Relationships => "Relationships",
                 _ => throw new ArgumentException("Unknown collection", nameof(collection))
             };
+
+            if (!string.IsNullOrEmpty(alias))
+            {
+                _collection += $" {alias}";
+            }
         }
 
         /// <summary>
@@ -128,6 +134,37 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         public DigitalTwinsQueryBuilder<T> Count()
         {
             _count = true;
+            return this;
+        }
+
+        /// <summary>
+        /// Used to add a from clause into a digital twins query.
+        /// </summary>
+        /// <param name="collection">Collection to query from.</param>
+        /// <param name="alias">Optional alias for collection.</param>
+        /// <returns>Query that contains a from clause.</returns>
+        public DigitalTwinsQueryBuilder<T> From(DigitalTwinsCollection collection, string alias = null)
+        {
+            if (string.IsNullOrEmpty(alias))
+            {
+                _collection = collection.ToString();
+            }
+            else
+            {
+                _collection = $"{collection} {alias}";
+            }
+
+            return this;
+        }
+
+        /// <summary>
+        /// Used to add a custom-written from clause into a digital twins query.
+        /// </summary>
+        /// <param name="collection">Collection to query from.</param>
+        /// <returns>Query that contains a from clause.</returns>
+        public DigitalTwinsQueryBuilder<T> FromCustom(string collection)
+        {
+            _collection = collection;
             return this;
         }
 
@@ -262,11 +299,33 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         private List<string> _propertyNames;
         private List<string> _clauses;
 
+        private string _queryText;
+
         /// <summary>
         /// Gets the string representation of the built query.
         /// </summary>
         /// <returns>String represenation of query.</returns>
         public string GetQueryText()
+        {
+            if (string.IsNullOrEmpty(_queryText))
+            {
+                Build();
+            }
+
+            return _queryText;
+        }
+
+        /// <summary>
+        /// Gets the string representation of the built query.
+        /// </summary>
+        /// <returns>String represenation of query.</returns>
+        public override string ToString() => GetQueryText();
+
+        /// <summary>
+        /// TODO.
+        /// </summary>
+        /// <returns></returns>
+        public DigitalTwinsQueryBuilder<T> Build()
         {
             QueryAssembler query = new QueryAssembler();
             SelectClauseAssembler selectClause = _count
@@ -293,15 +352,11 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                              .CustomClause(_clauses[0]), (expr, clause) => expr.And().CustomClause(clause));
             }
 
-            return whereClause
+            _queryText = whereClause
                 .Build()
                 .GetQueryText();
-        }
 
-        /// <summary>
-        /// Gets the string representation of the built query.
-        /// </summary>
-        /// <returns>String represenation of query.</returns>
-        public override string ToString() => GetQueryText();
+            return this;
+        }
     }
 }
