@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Azure.DigitalTwins.Core.Samples
 {
+    #region Snippet:DigitalTwinsQueryBuilderConferenceRoom
     public class ConferenceRoom
     {
         public string Room { get; set; }
@@ -18,4 +19,5 @@ namespace Azure.DigitalTwins.Core.Samples
         public int Occupants { get; set; }
         public bool IsOccupied { get; set; }
     }
+    #endregion
 }

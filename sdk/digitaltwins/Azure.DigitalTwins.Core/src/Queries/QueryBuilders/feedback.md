@@ -135,9 +135,16 @@ DigitalTwinsQueryBuilder<ConferenceRoom> simplestQuery = new DigitalTwinsQueryBu
 // SELECT * FROM Relationsips
 DigitalTwinsQueryBuilder<ConferenceRoom> simplestQueryRelationships = new DigitalTwinsQueryBuilder<ConferenceRoom>(DigitalTwinsCollection.Relationships);
 
-// SELECT TOP(3) FROM DIGITALTWINS
-DigitalTwinsQueryBuilder<ConferenceRoom> queryWithSelectTop = new DigitalTwinsQueryBuilder<ConferenceRoom>().Take(3);
+// Use LINQ expressions to select defined properties in type T of DigitalTwinsQueryBuilder
+// SELECT Temperature From DigitalTwins
+DigitalTwinsQueryBuilder<ConferenceRoom> selectSingleProperty = new DigitalTwinsQueryBuilder<ConferenceRoom>()
+    .Select(r => r.Temperature);
 
+// SELECT TOP(3) FROM DIGITALTWINS
+DigitalTwinsQueryBuilder<ConferenceRoom> queryWithSelectTop = new DigitalTwinsQueryBuilder<ConferenceRoom>()
+    .Take(3);
+
+// Strings are valid ways to denote selectable properties as an alternative to LINQ expressions
 // SELECT TOP(3) Temperature, Humidity FROM DIGITALTWINS
 DigitalTwinsQueryBuilder<ConferenceRoom> queryWithSelectTopProperty = new DigitalTwinsQueryBuilder<ConferenceRoom>()
     .Select("Temperature", "Humidity")
@@ -165,14 +172,18 @@ Examples of `Parenthetical` and `Logical Operators`:
 ```C# Snippet:DigitalTwinsQueryBuilder_ComplexConditions
 // SELECT * FROM DIGITALTWINS WHERE Temperature = 50 OR IS_OF_MODEL("dtmi..", exact) OR IS_NUMBER(Temperature)
 DigitalTwinsQueryBuilder<ConferenceRoom> logicalOps_MultipleOr = new DigitalTwinsQueryBuilder<ConferenceRoom>()
-    .Where(r => r.Temperature == 50 || DigitalTwinsFunctions.IsOfModel("dtmi:example:room;1", true) || DigitalTwinsFunctions.IsNumber(r.Temperature));
+    .Where(r => r.Temperature == 50 || 
+    DigitalTwinsFunctions.IsOfModel("dtmi:example:room;1", true) || 
+    DigitalTwinsFunctions.IsNumber(r.Temperature));
 
 // SELECT * FROM DIGITALTWINS WHERE (IS_NUMBER(Humidity) OR IS_DEFINED(Humidity)) 
 // OR (IS_OF_MODEL("dtmi:example:hvac;1") AND IS_NULL(Occupants))
 DigitalTwinsQueryBuilder<ConferenceRoom> logicalOpsNested = new DigitalTwinsQueryBuilder<ConferenceRoom>()
-    .Where(r => (DigitalTwinsFunctions.IsNumber(r.Humidity) || DigitalTwinsFunctions.IsDefined(r.Humidity))
+    .Where(r => (DigitalTwinsFunctions.IsNumber(r.Humidity) 
+                    || DigitalTwinsFunctions.IsDefined(r.Humidity))
                 &&
-                (DigitalTwinsFunctions.IsOfModel("dtmi:example:hvac;1") && DigitalTwinsFunctions.IsNull(r.Occupants)));
+                (DigitalTwinsFunctions.IsOfModel("dtmi:example:hvac;1") 
+                    && DigitalTwinsFunctions.IsNull(r.Occupants)));
 ```
 
 ### Ambiguities

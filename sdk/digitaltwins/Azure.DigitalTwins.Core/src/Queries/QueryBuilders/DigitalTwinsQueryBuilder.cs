@@ -322,9 +322,9 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         public override string ToString() => GetQueryText();
 
         /// <summary>
-        /// TODO.
+        /// Updates the string representation of the query.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Query with updated string representation.</returns>
         public DigitalTwinsQueryBuilder<T> Build()
         {
             QueryAssembler query = new QueryAssembler();
