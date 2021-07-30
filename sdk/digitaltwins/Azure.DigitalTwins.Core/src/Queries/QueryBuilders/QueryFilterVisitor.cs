@@ -197,7 +197,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                 ExpressionType.TypeAs => 10,
                 ExpressionType.TypeEqual => 10,
 
-                //          Equality: x == y, x != y
+                // Equality: x == y, x != y
                 ExpressionType.Equal => 9,
                 ExpressionType.NotEqual => 9,
 
@@ -210,10 +210,10 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                 // Boolean logical OR or bitwise logical OR: x | y
                 ExpressionType.Or => 6,
 
-                //          Conditional AND: x && y
+                // Conditional AND: x && y
                 ExpressionType.AndAlso => 5,
 
-                //          Conditional OR: x || y
+                // Conditional OR: x || y
                 ExpressionType.OrElse => 4,
 
                 // Null-coalescing operator: x ?? y
@@ -262,16 +262,16 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             {
                 string name = m.Method.Name switch
                 {
-                    nameof(DigitalTwinsFunctions.IsDefined) => "IS_DEFINED",
-                    nameof(DigitalTwinsFunctions.IsNumber) => "IS_NUMBER",
-                    nameof(DigitalTwinsFunctions.IsPrimitive) => "IS_PRIMITIVE",
-                    nameof(DigitalTwinsFunctions.IsBool) => "IS_BOOL",
-                    nameof(DigitalTwinsFunctions.IsString) => "IS_STRING",
-                    nameof(DigitalTwinsFunctions.IsObject) => "IS_OBJECT",
-                    nameof(DigitalTwinsFunctions.IsNull) => "IS_NULL",
-                    nameof(DigitalTwinsFunctions.StartsWith) => "STARTSWITH",
-                    nameof(DigitalTwinsFunctions.EndsWith) => "ENDSWITH",
-                    nameof(DigitalTwinsFunctions.IsOfModel) => "IS_OF_MODEL",
+                    nameof(DigitalTwinsFunctions.IsDefined) => QueryConstants.IsDefined,
+                    nameof(DigitalTwinsFunctions.IsNumber) => QueryConstants.IsNumber,
+                    nameof(DigitalTwinsFunctions.IsPrimitive) => QueryConstants.IsPrimitive,
+                    nameof(DigitalTwinsFunctions.IsBool) => QueryConstants.IsBool,
+                    nameof(DigitalTwinsFunctions.IsString) => QueryConstants.IsString,
+                    nameof(DigitalTwinsFunctions.IsObject) => QueryConstants.IsObject,
+                    nameof(DigitalTwinsFunctions.IsNull) => QueryConstants.IsNull,
+                    nameof(DigitalTwinsFunctions.StartsWith) => QueryConstants.StartsWith,
+                    nameof(DigitalTwinsFunctions.EndsWith) => QueryConstants.EndsWith,
+                    nameof(DigitalTwinsFunctions.IsOfModel) => QueryConstants.IsOfModel,
                     _ => throw NotSupported(m)
                 };
 
@@ -322,7 +322,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                 {
                     bool first = true;
 
-                    foreach (var arg in m.Arguments)
+                    foreach (Expression arg in m.Arguments)
                     {
                         if (arg is ConstantExpression expr && expr.Value == null)
                         {

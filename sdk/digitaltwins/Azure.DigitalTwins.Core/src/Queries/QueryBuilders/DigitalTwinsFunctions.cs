@@ -9,7 +9,7 @@ using System.Text;
 namespace Azure.DigitalTwins.Core.QueryBuilder
 {
     /// <summary>
-    /// Digital Twins Query Language <see href="https://docs.microsoft.com/azure/digital-twins/reference-query-functions">Functions</see>.
+    /// DigitalTwins Query Language <see href="https://docs.microsoft.com/azure/digital-twins/reference-query-functions">Functions</see>.
     /// </summary>
     public static class DigitalTwinsFunctions
     {
@@ -97,7 +97,7 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
         {
             return value switch
             {
-                null => "null", // TODO - figure out proper way to represent these per ADT specs
+                null => "null",
                 bool x => x.ToString(formatProvider).ToLowerInvariant(),
                 int x => x.ToString(formatProvider),
                 double x => x.ToString(formatProvider),
@@ -108,10 +108,12 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             };
         }
 
-        internal static string Quote(string text)
+        private static string Quote(string text)
         {
             if (text == null)
-            { return "null"; }
+            {
+                return "null";
+            }
 
             // Optimistically allocate an extra 5% for escapes
             StringBuilder builder = new StringBuilder(2 + (int)(text.Length * 1.05));

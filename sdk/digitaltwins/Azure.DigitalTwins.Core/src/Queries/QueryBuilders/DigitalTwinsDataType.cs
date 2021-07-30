@@ -4,32 +4,32 @@
 namespace Azure.DigitalTwins.Core.QueryBuilder
 {
     /// <summary>
-    /// <see href="https://docs.microsoft.com/azure/digital-twins/concepts-models#schema">Data types</see>in the ADT query language.
+    /// <see href="https://docs.microsoft.com/azure/digital-twins/concepts-models#schema">Data types</see>in the DigitalTwins query language.
     /// </summary>
     public enum DigitalTwinsDataType
     {
         /// <summary>
-        /// Boolean type in the ADT query language.
+        /// Boolean type in the DigitalTwins query language.
         /// </summary>
         DigitalTwinsBool,
 
         /// <summary>
-        /// Numeric type in the ADT query language.
+        /// Numeric type in the DigitalTwins query language.
         /// </summary>
         DigitalTwinsNumber,
 
         /// <summary>
-        /// String in the ADT query language.
+        /// String in the DigitalTwins query language.
         /// </summary>
         DigitalTwinsString,
 
         /// <summary>
-        /// Primitive type (string, numeric, boolean, or null) in the ADT query language.
+        /// Primitive type (string, numeric, boolean, or null) in the DigitalTwins query language.
         /// </summary>
         DigitalTwinsPrimative,
 
         /// <summary>
-        /// Object in the ADT query language.
+        /// Object in the DigitalTwins query language.
         /// </summary>
         DigitalTwinsObject
     }

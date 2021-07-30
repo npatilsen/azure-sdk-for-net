@@ -13,7 +13,6 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     internal class ExpressionNormalizer : LinqExpressionVisitor
     {
         private const bool LiftToNull = false;
-
         private readonly Dictionary<Expression, Pattern> _patterns = new Dictionary<Expression, Pattern>(/*ReferenceEqualityComparer<Expression>.Instance*/);
 
         private ExpressionNormalizer(Dictionary<Expression, Expression> normalizerRewrites)
@@ -56,7 +55,8 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
                     break;
             }
 
-            if (_patterns.TryGetValue(visited.Left, out Pattern pattern) && pattern.Kind == PatternKind.Compare && IsConstantZero(visited.Right))
+            bool leftVisisted = _patterns.TryGetValue(visited.Left, out Pattern pattern);
+            if (leftVisisted && pattern.Kind == PatternKind.Compare && IsConstantZero(visited.Right))
             {
                 ComparePattern comparePattern = (ComparePattern)pattern;
                 if (TryCreateRelationalOperator(visited.NodeType, comparePattern.Left, comparePattern.Right, out BinaryExpression relationalExpression))
@@ -78,33 +78,6 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             RecordRewrite(u, result);
 
             return result;
-        }
-
-        private static Expression UnwrapObjectConvert(Expression input)
-        {
-            if (input.NodeType == ExpressionType.Constant && input.Type == typeof(object))
-            {
-                ConstantExpression constant = (ConstantExpression)input;
-
-                if (constant.Value != null &&
-                    constant.Value.GetType() != typeof(object))
-                {
-                    return Expression.Constant(constant.Value, constant.Value.GetType());
-                }
-            }
-
-            while (ExpressionType.Convert == input.NodeType)
-            {
-                input = ((UnaryExpression)input).Operand;
-            }
-
-            return input;
-        }
-
-        private static bool IsConstantZero(Expression expression)
-        {
-            return expression.NodeType == ExpressionType.Constant &&
-                ((ConstantExpression)expression).Value.Equals(0);
         }
 
         internal override Expression VisitMethodCall(MethodCallExpression call)
@@ -160,6 +133,33 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
             }
 
             throw new NotSupportedException($"Method {visited.Method.Name} not supported.");
+        }
+
+        private static Expression UnwrapObjectConvert(Expression input)
+        {
+            if (input.NodeType == ExpressionType.Constant && input.Type == typeof(object))
+            {
+                ConstantExpression constant = (ConstantExpression)input;
+
+                if (constant.Value != null &&
+                    constant.Value.GetType() != typeof(object))
+                {
+                    return Expression.Constant(constant.Value, constant.Value.GetType());
+                }
+            }
+
+            while (ExpressionType.Convert == input.NodeType)
+            {
+                input = ((UnaryExpression)input).Operand;
+            }
+
+            return input;
+        }
+
+        private static bool IsConstantZero(Expression expression)
+        {
+            return expression.NodeType == ExpressionType.Constant &&
+                ((ConstantExpression)expression).Value.Equals(0);
         }
 
         private static readonly MethodInfo StaticRelationalOperatorPlaceholderMethod = typeof(ExpressionNormalizer).GetMethod("RelationalOperatorPlaceholder", BindingFlags.Static | BindingFlags.NonPublic);

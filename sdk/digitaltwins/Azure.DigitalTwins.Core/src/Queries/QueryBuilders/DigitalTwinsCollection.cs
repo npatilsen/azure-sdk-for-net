@@ -9,12 +9,12 @@ namespace Azure.DigitalTwins.Core.QueryBuilder
     public enum DigitalTwinsCollection
     {
         /// <summary>
-        /// DigitalTwins collection in an ADT instance.
+        /// DigitalTwins collection in a DigitalTwins instance.
         /// </summary>
         DigitalTwins,
 
         /// <summary>
-        /// Relationships in an ADT instance.
+        /// Relationships in a DigitalTwins instance.
         /// </summary>
         Relationships,
     }
